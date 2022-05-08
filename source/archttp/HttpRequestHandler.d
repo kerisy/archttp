@@ -12,5 +12,7 @@
 module archttp.HttpRequestHandler;
 
 public import archttp.HttpContext;
+public import archttp.HttpResponse;
+public import archttp.HttpRequest;
 
-alias void delegate(HttpContext httpContext) HttpRequestHandler;
+alias HttpResponse delegate(HttpContext httpContext) HttpRequestHandler;

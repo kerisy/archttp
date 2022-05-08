@@ -6,29 +6,24 @@ void main()
     auto server = new HttpServer;
     server.Listen(8080);
 
-    server.Get("/", (HttpContext httpContext) {
-        httpContext.response().body("Hello archttp ;)");
-        httpContext.Send(httpContext.response().ToBuffer());
+    server.Get("/", (context) {
+        return context.response().body("Hello archttp ;)");
     });
 
-    server.Get("/world", (HttpContext httpContext) {
-        httpContext.response().body("Hello world");
-        httpContext.Send(httpContext.response().ToBuffer());
+    server.Get("/world", (context) {
+        return context.response().body("Hello world");
     });
 
-    server.Get("/user/{id:\\d+}", (HttpContext httpContext) {
-        httpContext.response().body("User id: " ~ httpContext.request.parameters["id"]);
-        httpContext.Send(httpContext.response().ToBuffer());
+    server.Get("/user/{id:\\d+}", (context) {
+        return context.response().body("User id: " ~ context.request.parameters["id"]);
     });
 
-    server.Get("/blog/{name}", (HttpContext httpContext) {
-        httpContext.response().body("Username: " ~ httpContext.request.parameters["name"]);
-        httpContext.Send(httpContext.response().ToBuffer());
+    server.Get("/blog/{name}", (context) {
+        return context.response().body("Username: " ~ context.request.parameters["name"]);
     });
 
-    server.Post("/upload", (HttpContext httpContext) {
-        httpContext.response().body("Using post method!");
-        httpContext.Send(httpContext.response().ToBuffer());
+    server.Post("/upload", (context) {
+        return context.response().body("Using post method!");
     });
 
     server.Start();

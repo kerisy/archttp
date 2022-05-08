@@ -14,17 +14,19 @@ module archttp.HttpContext;
 import archttp.HttpRequest;
 import archttp.HttpResponse;
 
-import gear.net.TcpStream;
+import gear.codec.Framed;
+
+alias Framed!(HttpRequest, HttpResponse) HttpFramed;
 
 class HttpContext
 {
     private HttpRequest _request;
     private HttpResponse _response;
-    private TcpStream _connection;
+    private HttpFramed _framed;
     
-    this(TcpStream connection)
+    this(HttpFramed framed)
     {
-        _connection = connection;
+        _framed = framed;
     }
 
     HttpRequest request() {
@@ -40,7 +42,7 @@ class HttpContext
     {
         if (_response is null)
             _response = new HttpResponse(this);
-            
+
         return _response;
     }
 
@@ -48,18 +50,14 @@ class HttpContext
     {
         _response = response;
     }
-    
-    TcpStream connection() {
-        return _connection;
-    }
 
-    void Send(ubyte[] buffer)
+    void Send(HttpResponse response)
     {
-        _connection.Write(buffer);
+        _framed.Send(response);
     }
 
     void End()
     {
-        _connection.Close();
+        // _connection.Close();
     }
 }

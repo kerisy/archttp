@@ -80,11 +80,11 @@ class HttpServer
 
         if (handler is null)
         {
-            httpContext.Send(httpContext.response().status(HttpStatusCode.NOT_FOUND).body("404 Not Found.").ToBuffer());
+            httpContext.Send(httpContext.response().status(HttpStatusCode.NOT_FOUND).body("404 Not Found."));
         }
         else
         {
-            handler(httpContext);
+            httpContext.Send(handler(httpContext));
         }
 
         httpContext.End();
@@ -100,7 +100,7 @@ class HttpServer
 
                 framed.OnFrame((HttpRequest request)
                     {
-                        HttpContext ctx = new HttpContext(connection);
+                        HttpContext ctx = new HttpContext(framed);
                         ctx.request(request);
                         Handle(ctx);
                     });
