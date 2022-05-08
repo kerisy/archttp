@@ -19,7 +19,7 @@ import gear.net.TcpStream;
 class HttpContext
 {
     private HttpRequest _request;
-    private HttpResponse _response; 
+    private HttpResponse _response;
     private TcpStream _connection;
     
     this(TcpStream connection)
@@ -36,11 +36,13 @@ class HttpContext
         _request = request;
     }
 
-    HttpResponse response() {
+    HttpResponse response()
+    {
         if (_response is null)
             _response = new HttpResponse(this);
+            
         return _response;
-    } 
+    }
 
     void response(HttpResponse response)
     {
@@ -51,12 +53,12 @@ class HttpContext
         return _connection;
     }
 
-    void send(ubyte[] buffer)
+    void Send(ubyte[] buffer)
     {
         _connection.Write(buffer);
     }
 
-    void end()
+    void End()
     {
         _connection.Close();
     }

@@ -80,14 +80,14 @@ class HttpServer
 
         if (handler is null)
         {
-            httpContext.send(httpContext.response().status(HttpStatusCode.NOT_FOUND).body("404 Not Found.").ToBuffer());
+            httpContext.Send(httpContext.response().status(HttpStatusCode.NOT_FOUND).body("404 Not Found.").ToBuffer());
         }
         else
         {
             handler(httpContext);
         }
 
-        httpContext.end();
+        httpContext.End();
     }
 
     HttpServer Listen(ushort port)
