@@ -1,0 +1,35 @@
+POST /upload HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:99.0) Gecko/20100101 Firefox/99.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: zh-CN,en-US;q=0.7,en;q=0.3
+Accept-Encoding: gzip, deflate, br
+Content-Type: multipart/form-data; boundary=---------------------------268222700142472544581575924676
+Content-Length: 682
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: cross-site
+Sec-Fetch-User: ?1
+
+-----------------------------268222700142472544581575924676
+Content-Disposition: form-data; name="username"
+
+zoujiaqing
+-----------------------------268222700142472544581575924676
+Content-Disposition: form-data; name="avatar"; filename=""
+Content-Type: application/octet-stream
+
+
+-----------------------------268222700142472544581575924676
+Content-Disposition: form-data; name="file[]"; filename=""
+Content-Type: application/octet-stream
+
+
+-----------------------------268222700142472544581575924676
+Content-Disposition: form-data; name="file[]"; filename=""
+Content-Type: application/octet-stream
+
+
+-----------------------------268222700142472544581575924676--

@@ -1,0 +1,10 @@
+.DS_Store
+.vscode
+libarchttp.a
+.dub
+dub.selections.json
+/examples/parser/parser
+/examples/parser/parser.exe
+/examples/httpserver/httpserver
+/examples/httpserver/httpserver.exe
+

@@ -1,0 +1,17 @@
+{
+    "folders": [
+        {
+            "path": "."
+        },
+        {
+            "path": "examples/parser"
+        },
+        {
+            "path": "examples/httpserver"
+        },
+        {
+            "path": "examples/netbuffer"
+        }
+    ],
+    "settings": {}
+}

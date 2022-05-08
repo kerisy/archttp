@@ -1,0 +1,6 @@
+name "archttp"
+
+homepage "https://www.kerisy.com"
+targetType "library"
+license "Apache-2.0"
+dependency "gear" path="../gear/"
