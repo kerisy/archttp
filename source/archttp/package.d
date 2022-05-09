@@ -19,7 +19,7 @@ public import archttp.HttpRequestHandler;
 public import archttp.HttpRequestParser;
 public import archttp.HttpRequestParserHandler;
 public import archttp.HttpResponse;
-public import archttp.HttpServer;
+public import archttp.Archttp;
 public import archttp.HttpStatusCode;
 public import archttp.MultiPart;
 public import archttp.Router;

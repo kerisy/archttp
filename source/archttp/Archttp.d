@@ -9,7 +9,7 @@
  *
  */
 
-module archttp.HttpServer;
+module archttp.Archttp;
 
 import gear.buffer.Bytes;
 
@@ -34,7 +34,7 @@ public import archttp.HttpContext;
 import archttp.HttpRequestHandler;
 import archttp.Router;
 
-class HttpServer
+class Archttp
 {
     private
     {
@@ -50,25 +50,25 @@ class HttpServer
         _router = new Router!HttpRequestHandler;
     }
 
-    HttpServer Get(string route, HttpRequestHandler handler)
+    Archttp Get(string route, HttpRequestHandler handler)
     {
         _router.add(route, HttpMethod.GET, handler);
         return this;
     }
 
-    HttpServer Post(string route, HttpRequestHandler handler)
+    Archttp Post(string route, HttpRequestHandler handler)
     {
         _router.add(route, HttpMethod.POST, handler);
         return this;
     }
 
-    HttpServer Put(string route, HttpRequestHandler handler)
+    Archttp Put(string route, HttpRequestHandler handler)
     {
         _router.add(route, HttpMethod.PUT, handler);
         return this;
     }
 
-    HttpServer Delete(string route, HttpRequestHandler handler)
+    Archttp Delete(string route, HttpRequestHandler handler)
     {
         _router.add(route, HttpMethod.DELETE, handler);
         return this;
@@ -90,7 +90,7 @@ class HttpServer
         httpContext.End();
     }
 
-    HttpServer Listen(ushort port)
+    Archttp Bind(ushort port)
     {
         _listener.Bind(port);
         _listener.Accepted((TcpListener sender, TcpStream connection)
@@ -117,7 +117,7 @@ class HttpServer
         return this;
     }
 
-    void Start()
+    void Run()
     {
         Infof("Listening on: %s", _listener.BindingAddress.toString());
 

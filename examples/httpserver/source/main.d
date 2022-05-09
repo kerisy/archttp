@@ -3,28 +3,28 @@ import archttp;
 
 void main()
 {
-    auto server = new HttpServer;
-    server.Listen(8080);
+    auto app = new Archttp;
+    app.Bind(8080);
 
-    server.Get("/", (context) {
+    app.Get("/", (context) {
         return context.response().body("Hello archttp ;)");
     });
 
-    server.Get("/world", (context) {
+    app.Get("/world", (context) {
         return context.response().body("Hello world");
     });
 
-    server.Get("/user/{id:\\d+}", (context) {
+    app.Get("/user/{id:\\d+}", (context) {
         return context.response().body("User id: " ~ context.request.parameters["id"]);
     });
 
-    server.Get("/blog/{name}", (context) {
+    app.Get("/blog/{name}", (context) {
         return context.response().body("Username: " ~ context.request.parameters["name"]);
     });
 
-    server.Post("/upload", (context) {
+    app.Post("/upload", (context) {
         return context.response().body("Using post method!");
     });
 
-    server.Start();
+    app.Run();
 }
