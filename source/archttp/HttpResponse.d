@@ -16,6 +16,7 @@ import archttp.HttpContext;
 
 import std.format;
 import std.array;
+import std.conv : to;
 
 class HttpResponse
 {
@@ -74,7 +75,6 @@ public:
     HttpResponse body(string body)
     {
         _body = body;
-
         return this;
     }
 
@@ -110,6 +110,8 @@ public:
      */
     ubyte[] ToBuffer()
     {
+        header("Content-Length", bodySize().to!string);
+        
         auto app = appender!string;
         app ~= format!"HTTP/1.1 %d %s\r\n"(_status, getHttpStatusMessage(_status));
         foreach (name, value; _headers) {
