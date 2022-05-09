@@ -88,16 +88,6 @@ public:
         return _status;
     }
 
-    /*
-     * Get the byte count of the response body.
-     *
-     * @return the size of the response body
-     */
-    size_t bodySize()
-    {
-        return _body.length;
-    }
-
     //  -----  serializer  -----
 
     /*
@@ -110,8 +100,8 @@ public:
      */
     ubyte[] ToBuffer()
     {
-        header("Content-Length", bodySize().to!string);
-        
+        header("Content-Length", _body.length.to!string);
+
         auto app = appender!string;
         app ~= format!"HTTP/1.1 %d %s\r\n"(_status, getHttpStatusMessage(_status));
         foreach (name, value; _headers) {
