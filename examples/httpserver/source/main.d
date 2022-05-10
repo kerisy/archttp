@@ -3,7 +3,10 @@ import archttp;
 
 void main()
 {
-    auto app = new Archttp;
+    uint ioThreads = 1;
+    
+    auto app = new Archttp(ioThreads);
+
     app.Bind(8080);
 
     app.Get("/", (context) {

@@ -52,20 +52,27 @@ class Archttp
 
         bool _isRunning = false;
 
-        TcpSocket _listener;
+        // for multi-threaded
         TcpListener[] _listeners;
-
-        EventLoopGroup _loopGroup = null;
+        EventLoopGroup _loopGroup;
+        
+        // for single-thread
+        TcpListener _listener;
+        EventLoop _loop;
 
         Router!HttpRequestHandler _router;
     }
 
     this(uint ioThreads = (totalCPUs - 1), uint workerThreads = 0)
     {
-        _ioThreads = ioThreads;
+        _ioThreads = ioThreads > 1 ? ioThreads : 1;
         _workerThreads = workerThreads;
         _router = new Router!HttpRequestHandler;
-        _loopGroup = new EventLoopGroup(ioThreads);
+
+        if (_ioThreads > 1)
+            _loopGroup = new EventLoopGroup(ioThreads);
+        else
+            _loop = new EventLoop();
     }
 
     Archttp Get(string route, HttpRequestHandler handler)
@@ -108,10 +115,13 @@ class Archttp
         httpContext.End();
     }
 
-    private TcpListener CreateListener(EventLoop loop) {
+    private TcpListener CreateListener(EventLoop loop)
+    {
 		TcpListener listener = new TcpListener(loop, _addr.addressFamily);
 
-		listener.ReusePort(true);
+        if ( _ioThreads > 0 )
+		    listener.ReusePort(true);
+
 		listener.Bind(_addr).Listen(1024);
         listener.Accepted(&Accepted);
 		listener.Start();
@@ -152,15 +162,25 @@ class Archttp
 
     void Run()
     {
-        _loopGroup.Start();
-        _isRunning = true;
-
-        foreach ( loop ; _loopGroup.Loops() )
-        {
-            _listeners ~= CreateListener(loop);
-        }
-
-		Infof("io threads: %d", _loopGroup.size);
+		Infof("io threads: %d", _ioThreads);
 		Infof("worker threads: %d", _workerThreads);
+
+        if (_ioThreads > 1)
+        {
+            _loopGroup.Start();
+
+            foreach ( loop ; _loopGroup.Loops() )
+            {
+                _listeners ~= CreateListener(loop);
+            }
+
+            _isRunning = true;
+        }
+        else
+        {
+            _listener = CreateListener(_loop);
+            _isRunning = true;
+            _loop.Run();
+        }
     }
 }

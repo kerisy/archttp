@@ -112,6 +112,7 @@ class HttpRequestParser
         }
 
         _request = _headerHandler.request();
+        // _headerHandler.reset();
         _parsedLength = result;
         _headerParsed = true;
 
