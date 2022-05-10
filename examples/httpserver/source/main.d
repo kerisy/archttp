@@ -11,23 +11,30 @@ void main()
     app.Bind(8080);
 
     app.Get("/", (context) {
-        return context.response().body("Hello archttp ;)");
+        auto response = context.response();
+        response.body("Hello Archttp");
     });
 
     app.Get("/world", (context) {
-        return context.response().body("Hello world");
+        auto response = context.response();
+        response.body("Hello world");
     });
 
     app.Get("/user/{id:\\d+}", (context) {
-        return context.response().body("User id: " ~ context.request.parameters["id"]);
+        auto request = context.request();
+        auto response = context.response();
+        response.body("User id: " ~ request.parameters["id"]);
     });
 
     app.Get("/blog/{name}", (context) {
-        return context.response().body("Username: " ~ context.request.parameters["name"]);
+        auto request = context.request();
+        auto response = context.response();
+        response.body("Username: " ~ request.parameters["name"]);
     });
 
     app.Post("/upload", (context) {
-        return context.response().body("Using post method!");
+        auto response = context.response();
+        response.body("Using post method!");
     });
 
     app.Run();

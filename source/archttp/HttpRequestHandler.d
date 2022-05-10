@@ -15,4 +15,4 @@ public import archttp.HttpContext;
 public import archttp.HttpResponse;
 public import archttp.HttpRequest;
 
-alias HttpResponse delegate(HttpContext httpContext) HttpRequestHandler;
+alias void delegate(HttpContext httpContext) HttpRequestHandler;

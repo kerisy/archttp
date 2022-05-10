@@ -109,7 +109,8 @@ class Archttp
         }
         else
         {
-            httpContext.Send(handler(httpContext));
+            handler(httpContext);
+            httpContext.Send(httpContext.response());
         }
 
         httpContext.End();
