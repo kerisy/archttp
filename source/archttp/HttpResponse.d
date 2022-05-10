@@ -14,9 +14,12 @@ module archttp.HttpResponse;
 import archttp.HttpStatusCode;
 import archttp.HttpContext;
 
+import gear.util.DateTime;
+
 import std.format;
 import std.array;
 import std.conv : to;
+import std.json;
 
 class HttpResponse
 {
@@ -75,6 +78,25 @@ public:
     HttpResponse body(string body)
     {
         _body = body;
+        
+        header("Content-Type", "text/plain");
+
+        return this;
+    }
+
+    /*
+     * Set the entire body of the response.
+     *
+     * Sets the body of the response, overwriting any previous data stored in the body.
+     *
+     * @param json the response body
+     */
+    HttpResponse json(JSONValue json)
+    {
+        _body = json.toString();
+
+        header("Content-Type", "application/json");
+
         return this;
     }
 
@@ -101,6 +123,7 @@ public:
     string ToBuffer()
     {
         header("Content-Length", _body.length.to!string);
+        header("Date", DateTime.GetTimeAsGMT());
 
         auto text = appender!string;
         text ~= format!"HTTP/1.1 %d %s\r\n"(_status, getHttpStatusMessage(_status));

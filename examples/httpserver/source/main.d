@@ -10,31 +10,18 @@ void main()
 
     app.Bind(8080);
 
-    app.Get("/", (context) {
+    app.Get("/textplain", (context) {
         auto response = context.response();
         response.body("Hello Archttp");
     });
 
-    app.Get("/world", (context) {
-        auto response = context.response();
-        response.body("Hello world");
-    });
+    app.Get("/json", (context) {
+        import std.json;
 
-    app.Get("/user/{id:\\d+}", (context) {
-        auto request = context.request();
         auto response = context.response();
-        response.body("User id: " ~ request.parameters["id"]);
-    });
+        auto j = JSONValue( ["message" : "Hello, World!"] );
 
-    app.Get("/blog/{name}", (context) {
-        auto request = context.request();
-        auto response = context.response();
-        response.body("Username: " ~ request.parameters["name"]);
-    });
-
-    app.Post("/upload", (context) {
-        auto response = context.response();
-        response.body("Using post method!");
+        response.json(j);
     });
 
     app.Run();
