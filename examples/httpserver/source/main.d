@@ -4,8 +4,9 @@ import archttp;
 void main()
 {
     uint ioThreads = 1;
-    
-    auto app = new Archttp(ioThreads);
+    uint workerThreads = 128;
+
+    auto app = new Archttp(ioThreads, workerThreads);
 
     app.Bind(8080);
 
