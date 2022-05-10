@@ -105,11 +105,7 @@ class Archttp
                         Handle(ctx);
                     });
 
-                connection.Disconnected(() {
-                        Infof("client disconnected: %s", connection.RemoteAddress.toString());
-                    }).Closed(() {
-                        Infof("connection closed, local: %s, remote: %s", connection.LocalAddress.toString(), connection.RemoteAddress.toString());
-                    }).Error((IoError error) { 
+                connection.Error((IoError error) { 
                         Errorf("Error occurred: %d  %s", error.errorCode, error.errorMsg); 
                     });
             });

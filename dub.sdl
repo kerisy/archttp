@@ -3,4 +3,6 @@ name "archttp"
 homepage "https://www.kerisy.com"
 targetType "library"
 license "Apache-2.0"
+dflags "-mcpu=native" platform="ldc"
 dependency "gear" path="../gear/"
+
