@@ -13,15 +13,15 @@ module archttp.codec.HttpEncoder;
 
 import gear.codec.Encoder;
 
-import gear.buffer.Buffer;
+import nbuff;
 
 import archttp.HttpRequest;
 import archttp.HttpResponse;
 
 class HttpEncoder : Encoder!HttpResponse
 {
-    override Buffer Encode(HttpResponse response)
+    override NbuffChunk Encode(HttpResponse response)
     {
-        return Buffer(cast(string) response.ToBuffer());
+        return NbuffChunk(response.ToBuffer());
     }
 }

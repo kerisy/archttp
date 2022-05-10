@@ -98,19 +98,19 @@ public:
      *
      * @return the HTTP response
      */
-    ubyte[] ToBuffer()
+    string ToBuffer()
     {
         header("Content-Length", _body.length.to!string);
 
-        auto app = appender!string;
-        app ~= format!"HTTP/1.1 %d %s\r\n"(_status, getHttpStatusMessage(_status));
+        auto text = appender!string;
+        text ~= format!"HTTP/1.1 %d %s\r\n"(_status, getHttpStatusMessage(_status));
         foreach (name, value; _headers) {
-            app ~= format!"%s: %s\r\n"(name, value);
+            text ~= format!"%s: %s\r\n"(name, value);
         }
-        app ~= "\r\n";
+        text ~= "\r\n";
 
-        app ~= _body.dup;
+        text ~= _body;
         
-        return cast(ubyte[]) app[];
+        return text[];
     }
 }

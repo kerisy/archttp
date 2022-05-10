@@ -11,7 +11,7 @@
 
 module archttp.Archttp;
 
-import gear.buffer.Bytes;
+import nbuff;
 
 import gear.codec;
 

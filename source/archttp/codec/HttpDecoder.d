@@ -13,8 +13,8 @@ module archttp.codec.HttpDecoder;
 
 import gear.codec.Decoder;
 import gear.codec.Encoder;
-import gear.buffer.Buffer;
-import gear.buffer.Bytes;
+
+import nbuff;
 
 import gear.event;
 
@@ -32,16 +32,16 @@ class HttpDecoder : Decoder!HttpRequest
         HttpRequest _request;
     }
     
-    override long Decode(ref Buffer buffer, ref HttpRequest request)
+    override long Decode(ref Nbuff buffer, ref HttpRequest request)
     {
-        long result = _parser.parse(cast(string) buffer.Data().data());
+        long result = _parser.parse(cast(string) buffer.data().data());
         
         if ( ParserStatus.COMPLETED == _parser.parserStatus() )
         {
             request = _parser.request();
 
             _parser.reset();
-            buffer.Pop(result);
+            buffer.pop(result);
             
             return result;
         }
