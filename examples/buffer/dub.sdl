@@ -1,7 +1,0 @@
-name "buffer"
-description "A minimal D application."
-authors "zoujiaqing"
-copyright "Copyright © 2022, zoujiaqing"
-license "proprietary"
-dependency "archttp" path="../../"
-dependency "nbuff" path="../../../nbuff/"

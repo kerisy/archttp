@@ -8,9 +8,6 @@
         },
         {
             "path": "examples/httpserver"
-        },
-        {
-            "path": "examples/netbuffer"
         }
     ],
     "settings": {}
