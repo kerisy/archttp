@@ -21,6 +21,8 @@ import gear.logging.ConsoleLogger;
 import gear.net.TcpListener;
 import gear.net.TcpStream;
 
+import gear.system.Memory : totalCPUs;
+
 // for gear http
 import gear.codec.Framed;
 import archttp.codec.HttpCodec;
@@ -34,20 +36,36 @@ public import archttp.HttpContext;
 import archttp.HttpRequestHandler;
 import archttp.Router;
 
+import std.socket;
+import std.experimental.allocator;
+
 class Archttp
 {
     private
     {
-        TcpListener _listener;
-        EventLoop _loop;
+        uint _ioThreads;
+        uint _workerThreads;
+
+        Address _addr;
+        string _host;
+        ushort _port;
+
+        bool _isRunning = false;
+
+        TcpSocket _listener;
+        TcpListener[] _listeners;
+
+        EventLoopGroup _loopGroup = null;
+
         Router!HttpRequestHandler _router;
     }
 
-    this()
+    this(uint ioThreads = (totalCPUs - 1), uint workerThreads = 0)
     {
-        _loop = new EventLoop();
-        _listener = new TcpListener(_loop);
+        _ioThreads = ioThreads;
+        _workerThreads = workerThreads;
         _router = new Router!HttpRequestHandler;
+        _loopGroup = new EventLoopGroup(ioThreads);
     }
 
     Archttp Get(string route, HttpRequestHandler handler)
@@ -90,34 +108,59 @@ class Archttp
         httpContext.End();
     }
 
-    Archttp Bind(ushort port)
+    private TcpListener CreateListener(EventLoop loop) {
+		TcpListener listener = new TcpListener(loop, _addr.addressFamily);
+
+		listener.ReusePort(true);
+		listener.Bind(_addr).Listen(1024);
+        listener.Accepted(&Accepted);
+		listener.Start();
+
+        return listener;
+	}
+
+    private void Accepted(TcpListener listener, TcpStream connection)
     {
-        _listener.Bind(port);
-        _listener.Accepted((TcpListener sender, TcpStream connection)
+        auto codec = new HttpCodec();
+        auto framed = codec.CreateFramed(connection);
+
+        framed.OnFrame((HttpRequest request)
             {
-                auto codec = new HttpCodec();
-                auto framed = codec.CreateFramed(connection);
-
-                framed.OnFrame((HttpRequest request)
-                    {
-                        HttpContext ctx = new HttpContext(framed);
-                        ctx.request(request);
-                        Handle(ctx);
-                    });
-
-                connection.Error((IoError error) { 
-                        Errorf("Error occurred: %d  %s", error.errorCode, error.errorMsg); 
-                    });
+                HttpContext ctx = new HttpContext(framed);
+                ctx.request(request);
+                Handle(ctx);
             });
+
+        connection.Error((IoError error) { 
+                Errorf("Error occurred: %d  %s", error.errorCode, error.errorMsg); 
+            });
+    }
+
+    Archttp Bind(string host, ushort port)
+    {
+        _host = host;
+        _port = port;
+        _addr = new InternetAddress(host, port);
 
         return this;
     }
 
+    Archttp Bind(ushort port)
+    {
+        return Bind("0.0.0.0", port);
+    }
+
     void Run()
     {
-        Infof("Listening on: %s", _listener.BindingAddress.toString());
+        _loopGroup.Start();
+        _isRunning = true;
 
-        _listener.Start();
-        _loop.Run();
+        foreach ( loop ; _loopGroup.Loops() )
+        {
+            _listeners ~= CreateListener(loop);
+        }
+
+		Infof("io threads: %d", _loopGroup.size);
+		Infof("worker threads: %d", _workerThreads);
     }
 }
