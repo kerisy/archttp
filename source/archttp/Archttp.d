@@ -22,6 +22,7 @@ import gear.net.TcpListener;
 import gear.net.TcpStream;
 
 import gear.system.Memory : totalCPUs;
+import gear.util.DateTime;
 
 // for gear http
 import gear.codec.Framed;
@@ -163,6 +164,8 @@ class Archttp
 
     void Run()
     {
+        DateTime.StartClock();
+        
 		Infof("io threads: %d", _ioThreads);
 		Infof("worker threads: %d", _workerThreads);
 
