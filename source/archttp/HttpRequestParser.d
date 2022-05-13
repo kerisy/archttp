@@ -56,6 +56,7 @@ class HttpRequestParser
 
     this()
     {
+        writeln("test");
         _headerHandler = new HttpRequestParserHandler;
         _headerParser = new HttpMessageParser(_headerHandler);
 
