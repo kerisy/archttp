@@ -67,7 +67,7 @@ class Archttp
         _workerThreads = workerThreads;
 
         _router = new Router!HttpRequestHandler;
-        _loop = new EventLoop(new Worker(new MemoryTaskQueue, workerThreads));
+        _loop = new EventLoop;
     }
 
     Archttp Get(string route, HttpRequestHandler handler)
