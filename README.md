@@ -1,7 +1,7 @@
 # Archttp
 A highly performant web framework written in D.
 
-# Example for web server
+## Example for web server
 ```D
 
 import archttp;
@@ -50,3 +50,13 @@ void main()
 }
 
 ```
+
+## Dependencies
+ * [Nbuff](https://github.com/ikod/nbuff)
+ * [httparsed](https://github.com/tchaloupka/httparsed)
+
+## Thanks contributors
+ * zoujiaqing
+ * Heromyth
+ * ikod
+ * tchaloupka
