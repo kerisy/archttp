@@ -49,6 +49,7 @@ void main()
 ```
 
 ## Dependencies
+ * [Geario](https://github.com/kerisy/geario)
  * [Nbuff](https://github.com/ikod/nbuff)
  * [httparsed](https://github.com/tchaloupka/httparsed)
  * [urld](https://github.com/dhasenan/urld)

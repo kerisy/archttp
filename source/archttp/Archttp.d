@@ -13,21 +13,21 @@ module archttp.Archttp;
 
 import nbuff;
 
-import gear.codec;
+import geario.codec;
 
-import gear.event;
-import gear.logging.ConsoleLogger;
+import geario.event;
+import geario.logging.ConsoleLogger;
 
-import gear.net.TcpListener;
-import gear.net.TcpStream;
+import geario.net.TcpListener;
+import geario.net.TcpStream;
 
-import gear.util.worker;
-import gear.util.DateTime;
+import geario.util.worker;
+import geario.util.DateTime;
 
-import gear.system.Memory : totalCPUs;
+import geario.system.Memory : totalCPUs;
 
 // for gear http
-import gear.codec.Framed;
+import geario.codec.Framed;
 import archttp.codec.HttpCodec;
 
 public import archttp.HttpContext;

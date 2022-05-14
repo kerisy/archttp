@@ -14,7 +14,7 @@ module archttp.HttpContext;
 import archttp.HttpRequest;
 import archttp.HttpResponse;
 
-import gear.codec.Framed;
+import geario.codec.Framed;
 
 alias Framed!(HttpRequest, HttpResponse) HttpFramed;
 

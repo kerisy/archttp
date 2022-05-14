@@ -11,7 +11,7 @@
 
 module archttp.codec.HttpEncoder;
 
-import gear.codec.Encoder;
+import geario.codec.Encoder;
 
 import nbuff;
 

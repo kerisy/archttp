@@ -11,18 +11,18 @@
 
 module archttp.codec.HttpDecoder;
 
-import gear.codec.Decoder;
-import gear.codec.Encoder;
+import geario.codec.Decoder;
+import geario.codec.Encoder;
 
 import nbuff;
 
-import gear.event;
+import geario.event;
 
 import archttp.HttpRequestParser;
 import archttp.HttpRequest;
 import archttp.HttpContext;
 
-import gear.logging;
+import geario.logging;
 
 class HttpDecoder : Decoder!HttpRequest
 {

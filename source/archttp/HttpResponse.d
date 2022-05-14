@@ -14,7 +14,7 @@ module archttp.HttpResponse;
 import archttp.HttpStatusCode;
 import archttp.HttpContext;
 
-import gear.util.DateTime;
+import geario.util.DateTime;
 
 import std.format;
 import std.array;

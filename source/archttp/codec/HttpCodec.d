@@ -11,9 +11,9 @@
 
 module archttp.codec.HttpCodec;
 
-import gear.codec.Codec;
-import gear.codec.Encoder;
-import gear.codec.Decoder;
+import geario.codec.Codec;
+import geario.codec.Encoder;
+import geario.codec.Decoder;
 
 import archttp.codec.HttpDecoder;
 import archttp.codec.HttpEncoder;
