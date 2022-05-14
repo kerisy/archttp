@@ -51,9 +51,11 @@ void main()
 ## Dependencies
  * [Nbuff](https://github.com/ikod/nbuff)
  * [httparsed](https://github.com/tchaloupka/httparsed)
+ * [urld](https://github.com/dhasenan/urld)
 
 ## Thanks contributors
  * zoujiaqing
  * Heromyth
  * ikod
  * tchaloupka
+ * dhasenan

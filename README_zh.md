@@ -51,9 +51,11 @@ void main()
 ## 项目依赖
  * [Nbuff](https://github.com/ikod/nbuff)
  * [httparsed](https://github.com/tchaloupka/httparsed)
+ * [urld](https://github.com/dhasenan/urld)
 
 ## 感谢贡献者
  * zoujiaqing
  * Heromyth
  * ikod
  * tchaloupka
+ * dhasenan
