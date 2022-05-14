@@ -3,7 +3,7 @@ import archttp;
 
 void main()
 {
-    uint ioThreads = 1;
+    uint ioThreads = 2;
     uint workerThreads = 128;
 
     auto app = new Archttp(ioThreads, workerThreads);

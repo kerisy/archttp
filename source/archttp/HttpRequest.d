@@ -173,4 +173,16 @@ public:
     {
         return _body;
     }
+
+    void reset()
+    {
+        _headers = null;
+        _body = null;
+        _httpVersion = null;
+
+        query = null;
+        parameters = null;
+        fields = null;
+        files = null;
+    }
 }

@@ -21,9 +21,11 @@ import archttp.Url;
 
 class HttpRequestParserHandler : HttpMessageHandler
 {
-    this(HttpRequest request = new HttpRequest)
+    this(HttpRequest request = null)
     {
         this._request = request;
+        if (_request is null)
+            _request = new HttpRequest;
     }
 
     void onMethod(const(char)[] method)
@@ -62,7 +64,7 @@ class HttpRequestParserHandler : HttpMessageHandler
 
     void reset()
     {
-        _request = new HttpRequest;
+        _request.reset();
     }
 
     private HttpRequest _request;

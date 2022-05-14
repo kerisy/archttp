@@ -21,8 +21,10 @@ import gear.logging.ConsoleLogger;
 import gear.net.TcpListener;
 import gear.net.TcpStream;
 
-import gear.system.Memory : totalCPUs;
+import gear.util.worker;
 import gear.util.DateTime;
+
+import gear.system.Memory : totalCPUs;
 
 // for gear http
 import gear.codec.Framed;
@@ -53,27 +55,19 @@ class Archttp
 
         bool _isRunning = false;
 
-        // for multi-threaded
-        TcpListener[] _listeners;
-        EventLoopGroup _loopGroup;
-        
-        // for single-thread
         TcpListener _listener;
         EventLoop _loop;
 
         Router!HttpRequestHandler _router;
     }
 
-    this(uint ioThreads = (totalCPUs - 1), uint workerThreads = 0)
+    this(uint ioThreads = totalCPUs, uint workerThreads = 0)
     {
         _ioThreads = ioThreads > 1 ? ioThreads : 1;
         _workerThreads = workerThreads;
-        _router = new Router!HttpRequestHandler;
 
-        if (_ioThreads > 1)
-            _loopGroup = new EventLoopGroup(ioThreads);
-        else
-            _loop = new EventLoop();
+        _router = new Router!HttpRequestHandler;
+        _loop = new EventLoop(new Worker(new MemoryTaskQueue, workerThreads));
     }
 
     Archttp Get(string route, HttpRequestHandler handler)
@@ -117,20 +111,6 @@ class Archttp
         httpContext.End();
     }
 
-    private TcpListener CreateListener(EventLoop loop)
-    {
-		TcpListener listener = new TcpListener(loop, _addr.addressFamily);
-
-        if ( _ioThreads > 0 )
-		    listener.ReusePort(true);
-
-		listener.Bind(_addr).Listen(1024);
-        listener.Accepted(&Accepted);
-		listener.Start();
-
-        return listener;
-	}
-
     private void Accepted(TcpListener listener, TcpStream connection)
     {
         auto codec = new HttpCodec();
@@ -165,26 +145,18 @@ class Archttp
     void Run()
     {
         DateTime.StartClock();
-        
+
 		Infof("io threads: %d", _ioThreads);
 		Infof("worker threads: %d", _workerThreads);
 
-        if (_ioThreads > 1)
-        {
-            _loopGroup.Start();
+        TcpListener _listener = new TcpListener(_loop, _addr.addressFamily);
 
-            foreach ( loop ; _loopGroup.Loops() )
-            {
-                _listeners ~= CreateListener(loop);
-            }
-
-            _isRunning = true;
-        }
-        else
-        {
-            _listener = CreateListener(_loop);
-            _isRunning = true;
-            _loop.Run();
-        }
+        _listener.Threads(_ioThreads);
+        _listener.Bind(_addr).Listen(1024);
+        _listener.Accepted(&Accepted);
+        _listener.Start();
+        
+        _isRunning = true;
+        _loop.Run();
     }
 }

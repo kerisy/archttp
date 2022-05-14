@@ -56,7 +56,6 @@ class HttpRequestParser
 
     this()
     {
-        writeln("test");
         _headerHandler = new HttpRequestParserHandler;
         _headerParser = new HttpMessageParser(_headerHandler);
 
@@ -307,24 +306,7 @@ class HttpRequestParser
 
         return _contentType[index+searchString.length.._contentType.length];
     }
-
-    private void extractCookies()
-    {
-        // QByteArrayList temp(headerField.values(HTTP::COOKIE));
-        // int size = temp.size();
-        // for(int i = 0; i < size; ++i)
-        // {
-        //     const QByteArray &txt = temp[i].replace(";", ";\n");;
-        //     QList<QNetworkCookie> cookiesList = QNetworkCookie::parseCookies(txt);
-        //     for(QNetworkCookie &cookie : cookiesList)
-        //     {
-        //         if(cookie.name() == HTTP::SESSION_ID)
-        //             sessionId = cookie.value();
-        //         cookies.push_back(std::move(cookie));
-        //     }
-        // }
-    }
-
+    
     HttpRequest request()
     {
         return _request;
@@ -333,7 +315,6 @@ class HttpRequestParser
     void reset()
     {
         _contentLength = 0;
-        _request = null;
         _headerParsed = false;
         _parserStatus = ParserStatus.READY;
         _data = "";

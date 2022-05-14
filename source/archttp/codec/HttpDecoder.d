@@ -26,10 +26,11 @@ import gear.logging;
 
 class HttpDecoder : Decoder!HttpRequest
 {
-    private
+    private HttpRequestParser _parser;
+
+    this()
     {
-        HttpRequestParser _parser = new HttpRequestParser;
-        HttpRequest _request;
+        _parser = new HttpRequestParser;
     }
     
     override long Decode(ref Nbuff buffer, ref HttpRequest request)
