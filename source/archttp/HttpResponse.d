@@ -39,7 +39,7 @@ class HttpResponse
         Cookie[string] _cookies;
 
         // for ..
-        bool         _headersSent = false;
+        bool           _headersSent = false;
     }
 
 public:
@@ -114,8 +114,8 @@ public:
             return;
         }
 
-        sendHeader();
-        sendBody();
+        if (sendHeader())
+            sendBody();
     }
 
     HttpResponse json(JSONValue json)
@@ -167,16 +167,18 @@ public:
         auto file = File(path, "r");
         auto fileSize = file.size();
 
-        auto buf = Nbuff.get(fileSize);
-        
-        file.rawRead(buf.data());
+        // TODO: filename is empty from path get it!
 
         header(HttpHeader.CONTENT_DISPOSITION, "attachment; filename=" ~ filename ~ "; size=" ~ fileSize.to!string);
         header(HttpHeader.CONTENT_LENGTH, fileSize.to!string);
 
-        sendHeader();
+        if (sendHeader())
+        {
+            auto buf = Nbuff.get(fileSize);
+            file.rawRead(buf.data());
 
-       _httpContext.Write(NbuffChunk(buf, fileSize));
+            _httpContext.Write(NbuffChunk(buf, fileSize));
+        }
 
         return this;
     }
@@ -186,10 +188,18 @@ public:
         _httpContext.End();
     }
 
-    private void sendHeader()
+    private bool sendHeader()
     {
+        if (_headersSent)
+        {
+            LogErrorf("Can't set headers after they are sent");
+            return false;
+        }
+
         _httpContext.Write(headerToString());
         _headersSent = true;
+
+        return true;
     }
 
     private void sendBody()
