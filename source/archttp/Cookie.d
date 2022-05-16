@@ -20,7 +20,7 @@ class Cookie
 		bool   _httpOnly;
 	}
 
-	this(string name, string value = "", string path = "/", string domain = "", string expires = "", long maxAge = -1, bool secure = false, bool httpOnly = false)
+	this(string name, string value = "", string path = "/", string domain = "", string expires = "", long maxAge = 3600, bool secure = false, bool httpOnly = false)
 	{
 		_name = name;
 
