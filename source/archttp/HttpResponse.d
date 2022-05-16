@@ -123,12 +123,24 @@ public:
         return this;
     }
 
-    void redirect(HttpStatusCode statusCode, string path)
+    HttpResponse location(HttpStatusCode statusCode, string path)
     {
-        //
+        code(statusCode);
+        location(path);
     }
 
-    void redirect(string path)
+    HttpResponse location(string path)
+    {
+        redirect(HttpStatusCode.SEE_OTHER, path);
+        header("Location", path);
+    }
+
+    HttpResponse redirect(HttpStatusCode statusCode, string path)
+    {
+        location(statusCode, path);
+    }
+
+    HttpResponse redirect(string path)
     {
         redirect(HttpStatusCode.FOUND, path);
     }
