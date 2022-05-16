@@ -22,6 +22,6 @@ class HttpEncoder : Encoder!HttpResponse
 {
     override NbuffChunk Encode(HttpResponse response)
     {
-        return NbuffChunk(response.ToBuffer());
+        return NbuffChunk(response.toString());
     }
 }

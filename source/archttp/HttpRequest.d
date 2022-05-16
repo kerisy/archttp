@@ -30,9 +30,8 @@ class HttpRequest
 
     public
     {
-
         string[string] query;
-        string[string] parameters;
+        string[string] params;
         string[string] fields;
         MultiPart[] files;
     }
@@ -48,11 +47,6 @@ public:
         // }
     }
 
-    /*
-     * Set the HTTP method of this request.
-     *
-     * @param method the HTTP method
-     */
     void method(HttpMethod method)
     {
         _method = method;
@@ -181,7 +175,7 @@ public:
         _httpVersion = null;
 
         query = null;
-        parameters = null;
+        params = null;
         fields = null;
         files = null;
     }

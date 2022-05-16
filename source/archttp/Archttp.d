@@ -96,16 +96,18 @@ class Archttp
 
     private void Handle(HttpContext httpContext)
     {
-        auto handler = _router.match(httpContext.request().path(), httpContext.request().method(), httpContext.request().parameters);
+        auto handler = _router.match(httpContext.request().path(), httpContext.request().method(), httpContext.request().params);
 
         if (handler is null)
         {
-            httpContext.Send(httpContext.response().status(HttpStatusCode.NOT_FOUND).body("404 Not Found."));
+            httpContext.response().code(HttpStatusCode.NOT_FOUND).send("404 Not Found.");
         }
         else
         {
-            handler(httpContext);
-            httpContext.Send(httpContext.response());
+            handler(httpContext.request(), httpContext.response());
+
+            if (!httpContext.response().headerSent())
+                httpContext.response().send();
         }
 
         httpContext.End();
@@ -142,12 +144,18 @@ class Archttp
         return Bind("0.0.0.0", port);
     }
 
+    void Listen(ushort port)
+    {
+        this.Bind(port);
+        this.Run();
+    }
+
     void Run()
     {
         DateTime.StartClock();
 
 		Infof("io threads: %d", _ioThreads);
-		Infof("worker threads: %d", _workerThreads);
+		// Infof("worker threads: %d", _workerThreads);
 
         TcpListener _listener = new TcpListener(_loop, _addr.addressFamily);
 

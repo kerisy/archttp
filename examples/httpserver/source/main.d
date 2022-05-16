@@ -5,38 +5,32 @@ void main()
 {
     auto app = new Archttp;
 
-    app.Bind(8080);
-
-    app.Get("/", (context) {
-        auto response = context.response();
-        response.body("Hello Archttp");
+    app.Get("/", (request, response) {
+        response.send("Hello, World!");
     });
 
-    app.Get("/json", (context) {
+    app.Get("/json", (request, response) {
         import std.json;
-
-        auto response = context.response();
-        auto j = JSONValue( ["message" : "Hello, World!"] );
-        
-        response.json(j);
+        response.send( JSONValue( ["message" : "Hello, World!"] ) );
     });
 
-    app.Get("/user/{id:\\d+}", (context) {
-        auto request = context.request();
-        auto response = context.response();
-        response.body("User id: " ~ request.parameters["id"]);
+    app.Get("/cookie", (request, response) {
+        response.cookie("username", "myuser");
+        response.cookie(new Cookie("token", "0123456789"));
+        response.send("Set cookies ..");
     });
 
-    app.Get("/blog/{name}", (context) {
-        auto request = context.request();
-        auto response = context.response();
-        response.body("Username: " ~ request.parameters["name"]);
+    app.Get("/user/{id:\\d+}", (request, response) {
+        response.send("User id: " ~ request.params["id"]);
     });
 
-    app.Post("/upload", (context) {
-        auto response = context.response();
-        response.body("Using post method!");
+    app.Get("/blog/{name}", (request, response) {
+        response.send("Username: " ~ request.params["name"]);
     });
 
-    app.Run();
+    app.Get("/upload", (request, response) {
+        response.send("Using post method!");
+    });
+
+    app.Listen(8080);
 }

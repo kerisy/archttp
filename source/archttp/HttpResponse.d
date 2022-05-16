@@ -13,8 +13,10 @@ module archttp.HttpResponse;
 
 import archttp.HttpStatusCode;
 import archttp.HttpContext;
+import archttp.Cookie;
 
 import geario.util.DateTime;
+import geario.logging;
 
 import std.format;
 import std.array;
@@ -23,13 +25,18 @@ import std.json;
 
 class HttpResponse
 {
-    alias string[string]   headerList;
+    private
+    {
+        ushort         _statusCode = HttpStatusCode.OK;
+        string[string] _headers;
+        string         _body;
+        string         _buffer;
+        HttpContext    _httpContext;
+        Cookie[string] _cookies;
 
-    ushort       _status = HttpStatusCode.OK;
-    headerList   _headers;
-    string       _body;
-    string       _buffer;
-    HttpContext  _httpContext;
+        // for ..
+        bool         _headersSent = false;
+    }
 
 public:
     /*
@@ -40,15 +47,11 @@ public:
         _httpContext = ctx;
     }
 
-    /*
-     * Sets a header field.
-     *
-     * Setting the same header twice will overwrite the previous, and header keys are case
-     * insensitive. When sent to the client the header key will be as written here.
-     *
-     * @param header the header key
-     * @param value the header value
-     */
+    bool headerSent()
+    {
+        return _headersSent;
+    }
+
     HttpResponse header(string header, string value)
     {
         _headers[header] = value;
@@ -56,41 +59,61 @@ public:
         return this;
     }
 
-    /*
-     * Set the HTTP status of the response.
-     *
-     * @param status_code the status code
-     */
-    HttpResponse status(HttpStatusCode status_code)
+    HttpResponse code(HttpStatusCode statusCode)
     {
-        _status = status_code;
+        _statusCode = statusCode;
 
         return this;
     }
 
-    /*
-     * Set the entire body of the response.
-     *
-     * Sets the body of the response, overwriting any previous data stored in the body.
-     *
-     * @param body the response body
-     */
-    HttpResponse body(string body)
+    ushort code()
+    {
+        return _statusCode;
+    }
+
+    HttpResponse cookie(string name, string value, string path = "/", string domain = "", string expires = "", long maxAge = -1, bool secure = false, bool httpOnly = false)
+    {
+        _cookies[name] = new Cookie(name, value, path, domain, expires, maxAge, secure, httpOnly);
+        return this;
+    }
+
+    HttpResponse cookie(Cookie cookie)
+    {
+        _cookies[cookie.name()] = cookie;
+        return this;
+    }
+
+    Cookie cookie(string name)
+    {
+        return _cookies.get(name, null);
+    }
+
+    void send(string body)
     {
         _body = body;
-        
-        header("Content-Type", "text/plain");
-
-        return this;
+        send();
     }
 
-    /*
-     * Set the entire body of the response.
-     *
-     * Sets the body of the response, overwriting any previous data stored in the body.
-     *
-     * @param json the response body
-     */
+    void send(JSONValue json)
+    {
+        _body = json.toString();
+        
+        header("Content-Type", "application/json");
+        send();
+    }
+
+    void send()
+    {
+        if (_headersSent)
+        {
+            LogErrorf("Can't set headers after they are sent");
+            return;
+        }
+
+        _httpContext.Send(this);
+        _headersSent = true;
+    }
+
     HttpResponse json(JSONValue json)
     {
         _body = json.toString();
@@ -100,36 +123,40 @@ public:
         return this;
     }
 
-    /*
-     * Get the status of the response.
-     *
-     * @return the status of the response
-     */
-    ushort status()
+    void redirect(HttpStatusCode statusCode, string path)
     {
-        return _status;
+        //
     }
 
-    //  -----  serializer  -----
+    void redirect(string path)
+    {
+        redirect(HttpStatusCode.FOUND, path);
+    }
 
-    /*
-     * Generate an HTTP response from this object.
-     *
-     * Uses the configured parameters to generate a full HTTP response and returns it as a
-     * string.
-     *
-     * @return the HTTP response
-     */
-    string ToBuffer()
+    void end()
+    {
+        _httpContext.End();
+    }
+
+    override string toString()
     {
         header("Content-Length", _body.length.to!string);
         header("Date", DateTime.GetTimeAsGMT());
 
         auto text = appender!string;
-        text ~= format!"HTTP/1.1 %d %s\r\n"(_status, getHttpStatusMessage(_status));
+        text ~= format!"HTTP/1.1 %d %s\r\n"(_statusCode, getHttpStatusMessage(_statusCode));
         foreach (name, value; _headers) {
             text ~= format!"%s: %s\r\n"(name, value);
         }
+
+        if (_cookies.length)
+        {
+            foreach (cookie ; _cookies)
+            {
+                text ~= format!"Set-Cookie: %s\r\n"(cookie.toString());
+            }
+        }
+
         text ~= "\r\n";
 
         text ~= _body;
