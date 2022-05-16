@@ -14,6 +14,10 @@ void main()
         response.send( JSONValue( ["message" : "Hello, World!"] ) );
     });
 
+    app.Get("/download", (request, response) {
+        response.download("./attachments/avatar.jpg");
+    });
+
     app.Get("/cookie", (request, response) {
         response.cookie("username", "myuser");
         response.cookie(new Cookie("token", "0123456789"));

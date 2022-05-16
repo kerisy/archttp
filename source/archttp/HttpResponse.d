@@ -14,6 +14,9 @@ module archttp.HttpResponse;
 import archttp.HttpStatusCode;
 import archttp.HttpContext;
 import archttp.Cookie;
+import archttp.HttpHeader;
+
+import nbuff;
 
 import geario.util.DateTime;
 import geario.logging;
@@ -23,6 +26,7 @@ import std.array;
 import std.conv : to;
 import std.json;
 
+
 class HttpResponse
 {
     private
@@ -30,7 +34,7 @@ class HttpResponse
         ushort         _statusCode = HttpStatusCode.OK;
         string[string] _headers;
         string         _body;
-        string         _buffer;
+        ubyte[]        _buffer;
         HttpContext    _httpContext;
         Cookie[string] _cookies;
 
@@ -110,8 +114,8 @@ public:
             return;
         }
 
-        _httpContext.Send(this);
-        _headersSent = true;
+        sendHeader();
+        sendBody();
     }
 
     HttpResponse json(JSONValue json)
@@ -127,22 +131,54 @@ public:
     {
         code(statusCode);
         location(path);
+
+        return this;
     }
 
     HttpResponse location(string path)
     {
         redirect(HttpStatusCode.SEE_OTHER, path);
         header("Location", path);
+        return this;
     }
 
     HttpResponse redirect(HttpStatusCode statusCode, string path)
     {
         location(statusCode, path);
+        return this;
     }
 
     HttpResponse redirect(string path)
     {
         redirect(HttpStatusCode.FOUND, path);
+        return this;
+    }
+
+    HttpResponse sendFile()
+    {
+        //
+        return this;
+    }
+
+    HttpResponse download(string path, string filename = "")
+    {
+        import std.stdio : writeln, File;
+        
+        auto file = File(path, "r");
+        auto fileSize = file.size();
+
+        auto buf = Nbuff.get(fileSize);
+        
+        file.rawRead(buf.data());
+
+        header(HttpHeader.CONTENT_DISPOSITION, "attachment; filename=" ~ filename ~ "; size=" ~ fileSize.to!string);
+        header(HttpHeader.CONTENT_LENGTH, fileSize.to!string);
+
+        sendHeader();
+
+       _httpContext.Write(NbuffChunk(buf, fileSize));
+
+        return this;
     }
 
     void end()
@@ -150,9 +186,20 @@ public:
         _httpContext.End();
     }
 
-    override string toString()
+    private void sendHeader()
+    {
+        _httpContext.Write(headerToString());
+        _headersSent = true;
+    }
+
+    private void sendBody()
     {
         header("Content-Length", _body.length.to!string);
+        _httpContext.Write(_body);
+    }
+
+    string headerToString()
+    {
         header("Date", DateTime.GetTimeAsGMT());
 
         auto text = appender!string;
@@ -170,8 +217,6 @@ public:
         }
 
         text ~= "\r\n";
-
-        text ~= _body;
         
         return text[];
     }

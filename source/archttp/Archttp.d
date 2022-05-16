@@ -109,8 +109,6 @@ class Archttp
             if (!httpContext.response().headerSent())
                 httpContext.response().send();
         }
-
-        httpContext.End();
     }
 
     private void Accepted(TcpListener listener, TcpStream connection)
@@ -120,7 +118,7 @@ class Archttp
 
         framed.OnFrame((HttpRequest request)
             {
-                HttpContext ctx = new HttpContext(framed);
+                HttpContext ctx = new HttpContext(connection, framed);
                 ctx.request(request);
                 Handle(ctx);
             });

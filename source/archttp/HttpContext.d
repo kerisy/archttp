@@ -14,6 +14,9 @@ module archttp.HttpContext;
 import archttp.HttpRequest;
 import archttp.HttpResponse;
 
+import nbuff;
+
+import geario.net.TcpStream;
 import geario.codec.Framed;
 
 alias Framed!(HttpRequest, HttpResponse) HttpFramed;
@@ -22,10 +25,12 @@ class HttpContext
 {
     private HttpRequest _request;
     private HttpResponse _response;
+    private TcpStream _connection;
     private HttpFramed _framed;
     
-    this(HttpFramed framed)
+    this(TcpStream connection, HttpFramed framed)
     {
+        _connection = connection;
         _framed = framed;
     }
 
@@ -51,6 +56,16 @@ class HttpContext
         _response = response;
     }
 
+    void Write(string data)
+    {
+        _connection.Write(cast(ubyte[])data);
+    }
+
+    void Write(NbuffChunk bytes)
+    {
+        _connection.Write(bytes);
+    }
+
     void Send(HttpResponse response)
     {
         _framed.Send(response);
@@ -58,6 +73,6 @@ class HttpContext
 
     void End()
     {
-        // _connection.Close();
+        _connection.Close();
     }
 }
