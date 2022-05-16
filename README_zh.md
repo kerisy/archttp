@@ -36,6 +36,10 @@ void main()
 
 ```
 
+## 命名规则说明：
+Archttp 类的方法名都是大写字母开头的驼峰式命名规则，因为“get”、“delete”都是D语言的保留关键字。
+其他类的方法名都是小写字母开头的驼峰式命名规则。
+
 ## 项目依赖
  * [Geario](https://github.com/kerisy/geario)
  * [Nbuff](https://github.com/ikod/nbuff)

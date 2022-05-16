@@ -36,6 +36,10 @@ void main()
 
 ```
 
+## Note on naming rules:
+The method names of Archttp classe are all humped with a capital letter, because "get" and "delete" are reserved keywords for D.
+All other classes have camel - case names that begin with a lowercase letter.
+
 ## Dependencies
  * [Geario](https://github.com/kerisy/geario)
  * [Nbuff](https://github.com/ikod/nbuff)
