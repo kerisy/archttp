@@ -157,20 +157,24 @@ public:
     HttpResponse sendFile(string path, string filename = "")
     {
         import std.stdio : File;
-        import std.array : split;
-        import std.string : replace;
         
         auto file = File(path, "r");
         auto fileSize = file.size();
 
-        auto parts = path.replace("\\", "/").split("/");
-        if (parts.length == 1)
+        if (filename.length == 0)
         {
-            filename = path;
-        }
-        else
-        {
-            filename = parts[parts.length - 1];
+            import std.array : split;
+            import std.string : replace;
+            
+            auto parts = path.replace("\\", "/").split("/");
+            if (parts.length == 1)
+            {
+                filename = path;
+            }
+            else
+            {
+                filename = parts[parts.length - 1];
+            }
         }
 
         header(HttpHeader.CONTENT_DISPOSITION, "attachment; filename=" ~ filename ~ "; size=" ~ fileSize.to!string);
