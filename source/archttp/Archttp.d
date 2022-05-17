@@ -109,18 +109,21 @@ class Archttp
             if (!httpContext.response().headerSent())
                 httpContext.response().send();
         }
+        
+        if (!httpContext.keepAlive())
+            httpContext.End();
     }
 
     private void Accepted(TcpListener listener, TcpStream connection)
     {
         auto codec = new HttpCodec();
         auto framed = codec.CreateFramed(connection);
+        auto context = new HttpContext(connection, framed);
 
         framed.OnFrame((HttpRequest request)
             {
-                HttpContext ctx = new HttpContext(connection, framed);
-                ctx.request(request);
-                Handle(ctx);
+                context.request(request);
+                Handle(context);
             });
 
         connection.Error((IoError error) { 

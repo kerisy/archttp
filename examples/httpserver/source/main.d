@@ -15,7 +15,7 @@ void main()
     });
 
     app.Get("/download", (request, response) {
-        response.download("./attachments/avatar.jpg", "test.jpg");
+        response.sendFile("./attachments/avatar.jpg");
     });
 
     app.Get("/cookie", (request, response) {

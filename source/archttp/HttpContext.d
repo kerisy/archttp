@@ -18,6 +18,7 @@ import nbuff;
 
 import geario.net.TcpStream;
 import geario.codec.Framed;
+import geario.logging;
 
 alias Framed!(HttpRequest, HttpResponse) HttpFramed;
 
@@ -27,6 +28,8 @@ class HttpContext
     private HttpResponse _response;
     private TcpStream _connection;
     private HttpFramed _framed;
+    private bool _keepAlive;
+    private bool _keepAliveSetted;
     
     this(TcpStream connection, HttpFramed framed)
     {
@@ -41,6 +44,8 @@ class HttpContext
     void request(HttpRequest request)
     {
         _request = request;
+
+        initKeepAliveValue();
     }
 
     HttpResponse response()
@@ -54,6 +59,25 @@ class HttpContext
     void response(HttpResponse response)
     {
         _response = response;
+    }
+
+    bool keepAlive()
+    {
+        return _keepAlive;
+    }
+
+    private void initKeepAliveValue()
+    {
+        if (false == _keepAliveSetted)
+        {
+            string connectionType = _request.header("Connection");
+            if (connectionType.length && connectionType == "keep-alive")
+                _keepAlive = true;
+            else
+                _keepAlive = false;
+
+            _keepAliveSetted = true;
+        }
     }
 
     void Write(string data)

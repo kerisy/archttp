@@ -62,10 +62,10 @@ class HttpRequestParserHandler : HttpMessageHandler
         return _request;
     }
 
-    void reset()
-    {
-        _request.reset();
-    }
+    // void reset()
+    // {
+    //     _request.reset();
+    // }
 
     private HttpRequest _request;
 }

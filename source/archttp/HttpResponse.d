@@ -154,37 +154,43 @@ public:
         return this;
     }
 
-    HttpResponse sendFile()
+    HttpResponse sendFile(string path, string filename = "")
     {
-        //
-        return this;
-    }
-
-    HttpResponse download(string path, string filename = "")
-    {
-        import std.stdio : writeln, File;
+        import std.stdio : File;
+        import std.array : split;
+        import std.string : replace;
         
         auto file = File(path, "r");
         auto fileSize = file.size();
 
-        // TODO: filename is empty from path get it!
+        auto parts = path.replace("\\", "/").split("/");
+        if (parts.length == 1)
+        {
+            filename = path;
+        }
+        else
+        {
+            filename = parts[parts.length - 1];
+        }
 
         header(HttpHeader.CONTENT_DISPOSITION, "attachment; filename=" ~ filename ~ "; size=" ~ fileSize.to!string);
         header(HttpHeader.CONTENT_LENGTH, fileSize.to!string);
 
-        if (sendHeader())
-        {
-            auto buf = Nbuff.get(fileSize);
-            file.rawRead(buf.data());
+        _httpContext.Write(headerToString());
+        _headersSent = true;
+        
+        auto buf = Nbuff.get(fileSize);
+        file.rawRead(buf.data());
 
-            _httpContext.Write(NbuffChunk(buf, fileSize));
-        }
+        _httpContext.Write(NbuffChunk(buf, fileSize));
+        reset();
 
         return this;
     }
 
     void end()
     {
+        reset();
         _httpContext.End();
     }
 
@@ -195,6 +201,9 @@ public:
             LogErrorf("Can't set headers after they are sent");
             return false;
         }
+        
+        // if (_httpContext.keepAlive() && this.header(HttpHeader.CONTENT_LENGTH).length == 0)
+        header(HttpHeader.CONTENT_LENGTH, _body.length.to!string);
 
         _httpContext.Write(headerToString());
         _headersSent = true;
@@ -204,8 +213,21 @@ public:
 
     private void sendBody()
     {
-        header("Content-Length", _body.length.to!string);
         _httpContext.Write(_body);
+        reset();
+    }
+
+    void reset()
+    {
+        // clear request object
+        _httpContext.request().reset();
+
+        _statusCode = HttpStatusCode.OK;
+        _headers = null;
+        _body = null;
+        _buffer = null;
+        _cookies = null;
+        _headersSent = false;
     }
 
     string headerToString()
