@@ -22,7 +22,7 @@ void main()
         response.send("Username: " ~ request.params["name"]);
     });
 
-    app.get("/upload", (request, response) {
+    app.post("/upload", (request, response) {
         response.send("Using post method!");
     });
 
