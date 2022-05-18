@@ -11,21 +11,31 @@
 
 module archttp.HttpRequest;
 
+import geario.logging;
+
 import archttp.Url;
+import archttp.HttpContext;
+import archttp.HttpHeader;
 
 public import archttp.HttpMethod;
 public import archttp.MultiPart;
 
 class HttpRequest
 {
+    alias string[string] Header;
+    
     private
     {
         HttpMethod     _method;
         Url            _uri;
         string         _path;
-        string         _httpVersion;
+        string         _httpVersion = "HTTP/1.1";
         string[string] _headers;
         string         _body;
+
+        HttpContext    _httpContext;
+        string[string] _cookies;
+        bool           _cookiesParsed;
     }
 
     public
@@ -40,11 +50,13 @@ public:
 
     ~ this()
     {
-        // TODO clean upload files
-        // foreach ( file ; _files)
-        // {
-        //     // remove(file.tmpfile);
-        // }
+        reset();
+    }
+
+    HttpRequest context(HttpContext context)
+    {
+        _httpContext = context;
+        return this;
     }
 
     void method(HttpMethod method)
@@ -71,44 +83,66 @@ public:
         _path = path;
     }
 
-    /*
-     * Set the HTTP version of this request.
-     *
-     * Sets the HTTP protocol version of this request.
-     *
-     * @param http_version the HTTP protocol version
-     */
+    string ip()
+    {
+        return _httpContext.connection().RemoteAddress().toAddrString();
+    }
+
+    string[string] cookies()
+    {
+        parseCookieWhenNeeded();
+
+        return _cookies;
+    }
+
+    string cookie(T = string)(string name)
+    {
+        import std.conv : to;
+
+        parseCookieWhenNeeded();
+
+        return _cookies.get(name, "").to!T;
+    }
+
+    void parseCookieWhenNeeded()
+    {
+        if (_cookiesParsed)
+            return;
+
+        _cookiesParsed = true;
+    
+		string cookieString = header(HttpHeader.COOKIE);
+        
+        if (!cookieString.length)
+            return;
+        
+        import std.array : split;
+        import std.uri : decodeComponent;
+        import std.string : strip;
+        
+        foreach (part; cookieString.split(";"))
+        {
+            auto c = part.split("=");
+            _cookies[decodeComponent(c[0].strip)] = decodeComponent(c[1]);
+        }
+    }
+
     void httpVersion(string http_version)
     {
         // TODO
     }
 
-    /*
-     * Set a header value of this request.
-     *
-     * @param header the key of the header to be set
-     * @param value the value of the header
-     */
     void header(string header, string value)
     {
+        // _headers[] ~= [header: value];
         _headers[header] = value;
     }
 
-    /*
-     * Set the body of the request.
-     *
-     * @param body the body of the request
-     */
     void body(string body)
     {
         _body = body;
     }
 
-    /*
-     * Obtain a reference to the URL of this request.
-     *
-     * @return a reference to the URL
-     */
     Url uri()
     {
         return _uri;
@@ -119,21 +153,11 @@ public:
         return _path;
     }
 
-    /*
-     * Get the HTTP method of the request.
-     *
-     * @return HTTP method of the request
-     */
     HttpMethod method()
     {
         return _method;
     }
 
-    /*
-     * Get the HTTP version of the request.
-     *
-     * @return HTTP version of the request
-     */
     string httpVersion()
     {
         // TODO
@@ -141,13 +165,6 @@ public:
         return null;
     }
 
-    /*
-     * Get a header value from this request.
-     *
-     * @param name the key of the header to obtain
-     *
-     * @return either the header value, or an empty string if the header does not exist
-     */
     string header(string name)
     {
         return _headers.get(name, "");
@@ -158,11 +175,6 @@ public:
         return _headers;
     }
 
-    /*
-     * Get the body of the request.
-     *
-     * @return the body of the request
-     */
     string body()
     {
         return _body;
@@ -173,6 +185,8 @@ public:
         _headers = null;
         _body = null;
         _httpVersion = null;
+        _cookies = null;
+        _cookiesParsed = false;
 
         query = null;
         params = null;

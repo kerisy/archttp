@@ -33,6 +33,70 @@ class Cookie
 			.httpOnly(httpOnly);
 	}
 
+	Cookie parse(string cookieString)
+	{
+		// if (!cookieString.length)
+		// 	return null;
+
+		// auto parts = cookieString.splitter(';');
+		// auto idx = parts.front.indexOf('=');
+		// if (idx == -1)
+		// 	return null;
+
+		// auto name = parts.front[0 .. idx].strip();
+		// dst.m_value = parts.front[name.length + 1 .. $].strip();
+		// parts.popFront();
+
+		// if (!name.length)
+		// 	return null;
+
+		// foreach(part; parts) {
+		// 	if (!part.length)
+		// 		continue;
+
+		// 	idx = part.indexOf('=');
+		// 	if (idx == -1) {
+		// 		idx = part.length;
+		// 	}
+		// 	auto key = part[0 .. idx].strip();
+		// 	auto value = part[min(idx + 1, $) .. $].strip();
+
+		// 	try {
+		// 		if (key.sicmp("httponly") == 0) {
+		// 			dst.m_httpOnly = true;
+		// 		} else if (key.sicmp("secure") == 0) {
+		// 			dst.m_secure = true;
+		// 		} else if (key.sicmp("expires") == 0) {
+		// 			// RFC 822 got updated by RFC 1123 (which is to be used) but is valid for this
+		// 			// this parsing is just for validation
+		// 			parseRFC822DateTimeString(value);
+		// 			dst.m_expires = value;
+		// 		} else if (key.sicmp("max-age") == 0) {
+		// 			if (value.length && value[0] != '-')
+		// 				dst.m_maxAge = value.to!long;
+		// 		} else if (key.sicmp("domain") == 0) {
+		// 			if (value.length && value[0] == '.')
+		// 				value = value[1 .. $]; // the leading . must be stripped (5.2.3)
+
+		// 			enforce!ConvException(value.all!(a => a >= 32), "Cookie Domain must not contain any control characters");
+		// 			dst.m_domain = value.toLower; // must be lower (5.2.3)
+		// 		} else if (key.sicmp("path") == 0) {
+		// 			if (value.length && value[0] == '/') {
+		// 				enforce!ConvException(value.all!(a => a >= 32), "Cookie Path must not contain any control characters");
+		// 				dst.m_path = value;
+		// 			} else {
+		// 				dst.m_path = null;
+		// 			}
+		// 		} // else extension value...
+		// 	} catch (DateTimeException) {
+		// 	} catch (ConvException) {
+		// 	}
+		// 	// RFC 6265 says to ignore invalid values on all of these fields
+		// }
+		// return name;
+		return null;
+	}
+
 	string name() const
 	{
 		return _name;

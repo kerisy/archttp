@@ -44,6 +44,7 @@ class HttpContext
     void request(HttpRequest request)
     {
         _request = request;
+        _request.context(this);
 
         initKeepAliveValue();
     }
@@ -59,6 +60,11 @@ class HttpContext
     void response(HttpResponse response)
     {
         _response = response;
+    }
+
+    TcpStream connection()
+    {
+        return _connection;
     }
 
     bool keepAlive()

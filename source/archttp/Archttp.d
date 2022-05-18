@@ -70,19 +70,19 @@ class Archttp
         _loop = new EventLoop;
     }
 
-    Archttp Get(string route, HttpRequestHandler handler)
+    Archttp get(string route, HttpRequestHandler handler)
     {
         _router.add(route, HttpMethod.GET, handler);
         return this;
     }
 
-    Archttp Post(string route, HttpRequestHandler handler)
+    Archttp post(string route, HttpRequestHandler handler)
     {
         _router.add(route, HttpMethod.POST, handler);
         return this;
     }
 
-    Archttp Put(string route, HttpRequestHandler handler)
+    Archttp put(string route, HttpRequestHandler handler)
     {
         _router.add(route, HttpMethod.PUT, handler);
         return this;
@@ -94,7 +94,7 @@ class Archttp
         return this;
     }
 
-    private void Handle(HttpContext httpContext)
+    private void handle(HttpContext httpContext)
     {
         auto handler = _router.match(httpContext.request().path(), httpContext.request().method(), httpContext.request().params);
 
@@ -114,7 +114,7 @@ class Archttp
             httpContext.End();
     }
 
-    private void Accepted(TcpListener listener, TcpStream connection)
+    private void accepted(TcpListener listener, TcpStream connection)
     {
         auto codec = new HttpCodec();
         auto framed = codec.CreateFramed(connection);
@@ -123,7 +123,7 @@ class Archttp
         framed.OnFrame((HttpRequest request)
             {
                 context.request(request);
-                Handle(context);
+                handle(context);
             });
 
         connection.Error((IoError error) { 
@@ -131,7 +131,7 @@ class Archttp
             });
     }
 
-    Archttp Bind(string host, ushort port)
+    Archttp bind(string host, ushort port)
     {
         _host = host;
         _port = port;
@@ -140,18 +140,18 @@ class Archttp
         return this;
     }
 
-    Archttp Bind(ushort port)
+    Archttp bind(ushort port)
     {
-        return Bind("0.0.0.0", port);
+        return bind("0.0.0.0", port);
     }
 
-    void Listen(ushort port)
+    void listen(ushort port)
     {
-        this.Bind(port);
-        this.Run();
+        this.bind(port);
+        this.run();
     }
 
-    void Run()
+    void run()
     {
         DateTime.StartClock();
 
@@ -162,7 +162,7 @@ class Archttp
 
         _listener.Threads(_ioThreads);
         _listener.Bind(_addr).Listen(1024);
-        _listener.Accepted(&Accepted);
+        _listener.Accepted(&accepted);
         _listener.Start();
         
         _isRunning = true;

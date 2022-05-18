@@ -1,40 +1,45 @@
 
 import archttp;
-
+import std.stdio;
 void main()
 {
     auto app = new Archttp;
 
-    app.Get("/", (request, response) {
+    app.get("/", (request, response) {
         response.send("Hello, World!");
     });
 
-    app.Get("/json", (request, response) {
+    app.get("/json", (request, response) {
         import std.json;
         response.send( JSONValue( ["message" : "Hello, World!"] ) );
     });
 
-    app.Get("/download", (request, response) {
+    app.get("/download", (request, response) {
         response.sendFile("./attachments/avatar.jpg");
     });
 
-    app.Get("/cookie", (request, response) {
+    app.get("/cookie", (request, response) {
+
+        writeln(request.cookie("token"));
+        writeln(request.cookies());
+
         response.cookie("username", "myuser");
         response.cookie(new Cookie("token", "0123456789"));
+        response.cookie(new Cookie("userid", "123"));
         response.send("Set cookies ..");
     });
 
-    app.Get("/user/{id:\\d+}", (request, response) {
+    app.get("/user/{id:\\d+}", (request, response) {
         response.send("User id: " ~ request.params["id"]);
     });
 
-    app.Get("/blog/{name}", (request, response) {
+    app.get("/blog/{name}", (request, response) {
         response.send("Username: " ~ request.params["name"]);
     });
 
-    app.Get("/upload", (request, response) {
+    app.post("/upload", (request, response) {
         response.send("Using post method!");
     });
 
-    app.Listen(8080);
+    app.listen(8080);
 }
