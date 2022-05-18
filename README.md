@@ -26,6 +26,10 @@ void main()
         response.send("Using post method!");
     });
 
+    app.get("/download", (request, response) {
+        response.sendFile("./attachments/avatar.jpg");
+    });
+
     app.get("/json", (request, response) {
         import std.json;
         response.send( JSONValue( ["message" : "Hello, World!"] ) );
