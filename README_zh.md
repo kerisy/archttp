@@ -10,35 +10,42 @@ void main()
 {
     auto app = new Archttp;
 
-    app.Get("/", (request, response) {
+    app.get("/", (request, response) {
         response.send("Hello, World!");
     });
 
-    app.Get("/json", (request, response) {
+    app.get("/user/{id:\\d+}", (request, response) {
+        response.send("User id: " ~ request.params["id"]);
+    });
+
+    app.get("/blog/{name}", (request, response) {
+        response.send("Username: " ~ request.params["name"]);
+    });
+
+    app.get("/upload", (request, response) {
+        response.send("Using post method!");
+    });
+
+    app.get("/json", (request, response) {
         import std.json;
         response.send( JSONValue( ["message" : "Hello, World!"] ) );
     });
 
-    app.Get("/user/{id:\\d+}", (request, response) {
-        response.send("User id: " ~ request.params["id"]);
+    app.get("/cookie", (request, response) {
+
+        import std.stdio : writeln;
+
+        writeln(request.cookie("token"));
+        writeln(request.cookies());
+
+        response.cookie("username", "myuser");
+        response.cookie(new Cookie("token", "0123456789"));
+        response.send("Set cookies ..");
     });
 
-    app.Get("/blog/{name}", (request, response) {
-        response.send("Username: " ~ request.params["name"]);
-    });
-
-    app.Get("/upload", (request, response) {
-        response.send("Using post method!");
-    });
-
-    app.Listen(8080);
+    app.listen(8080);
 }
-
 ```
-
-## 命名规则说明：
-Archttp 类的方法名都是大写字母开头的驼峰式命名规则，因为“get”、“delete”都是D语言的保留关键字。
-其他类的方法名都是小写字母开头的驼峰式命名规则。
 
 ## 项目依赖
  * [Geario](https://github.com/kerisy/geario)
