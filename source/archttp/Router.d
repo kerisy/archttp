@@ -1,5 +1,5 @@
 /*
- * Archttp - A highly performant web framework written in D.
+ * Router - A highly performant web framework written in D.
  *
  * Copyright (C) 2021-2022 Kerisy.com
  *
@@ -14,6 +14,8 @@ module archttp.Router;
 public import archttp.Route;
 public import archttp.HttpMethod;
 
+import archttp.Archttp;
+
 import std.stdio;
 
 import std.regex : regex, match, matchAll;
@@ -27,6 +29,7 @@ class Router(RoutingHandler, MiddlewareHandler)
         Route!(RoutingHandler, MiddlewareHandler)[string] _routes;
         Route!(RoutingHandler, MiddlewareHandler)[] _regexRoutes;
         MiddlewareHandler[] _middlewareHandlers;
+        Archttp _app;
     }
     
     Router add(string path, HttpMethod method, RoutingHandler handler)
@@ -45,10 +48,39 @@ class Router(RoutingHandler, MiddlewareHandler)
         return this;
     }
 
-    Router addMiddlewareHnalder(MiddlewareHandler handler)
+    Router get(string route, RoutingHandler handler)
+    {
+        add(route, HttpMethod.GET, handler);
+        return this;
+    }
+
+    Router post(string route, RoutingHandler handler)
+    {
+        add(route, HttpMethod.POST, handler);
+        return this;
+    }
+
+    Router put(string route, RoutingHandler handler)
+    {
+        add(route, HttpMethod.PUT, handler);
+        return this;
+    }
+
+    Router Delete(string route, RoutingHandler handler)
+    {
+        add(route, HttpMethod.DELETE, handler);
+        return this;
+    }
+
+    Router use(MiddlewareHandler handler)
     {
         _middlewareHandlers ~= handler;
         return this;
+    }
+
+    void onMount(Archttp app)
+    {
+        _app = app;
     }
 
     MiddlewareHandler[] middlewareHandlers()

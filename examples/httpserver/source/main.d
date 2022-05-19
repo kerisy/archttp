@@ -1,6 +1,7 @@
 
 import archttp;
 import std.stdio;
+
 void main()
 {
     auto app = new Archttp;
@@ -31,6 +32,18 @@ void main()
     app.get("/", (request, response) {
         response.send("Hello, World!");
     });
+
+    auto adminRouter = app.createRouter();
+    
+    adminRouter.add("/", HttpMethod.GET, (request, response) {
+        response.send("Hello, Admin!");
+    });
+
+    adminRouter.add("/login", HttpMethod.GET, (request, response) {
+        response.send("Login page!");
+    });
+
+    app.use("/admin", adminRouter);
 
     app.get("/json", (request, response) {
         import std.json;

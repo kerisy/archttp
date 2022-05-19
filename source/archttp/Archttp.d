@@ -35,6 +35,7 @@ public import archttp.HttpRequest;
 public import archttp.HttpResponse;
 public import archttp.HttpStatusCode;
 public import archttp.HttpContext;
+public import archttp.HttpMethod;
 
 import archttp.HttpRequestHandler;
 import archttp.Router;
@@ -42,6 +43,8 @@ import archttp.MiddlewareExecutor;
 
 import std.socket;
 import std.experimental.allocator;
+
+alias Router!(HttpRequestHandler, HttpRequestMiddlewareHandler) Routing;
 
 class Archttp
 {
@@ -59,7 +62,9 @@ class Archttp
         TcpListener _listener;
         EventLoop _loop;
 
-        Router!(HttpRequestHandler, HttpRequestMiddlewareHandler) _router;
+        Routing _router;
+        Routing[string] _mountedRouters;
+        ulong _mountedRoutersMaxLength;
     }
 
     this(uint ioThreads = totalCPUs, uint workerThreads = 0)
@@ -67,13 +72,13 @@ class Archttp
         _ioThreads = ioThreads > 1 ? ioThreads : 1;
         _workerThreads = workerThreads;
 
-        _router = new Router!(HttpRequestHandler, HttpRequestMiddlewareHandler);
+        _router = new Routing;
         _loop = new EventLoop;
     }
 
     Archttp use(HttpRequestMiddlewareHandler handler)
     {
-        _router.addMiddlewareHnalder(handler);
+        _router.use(handler);
         return this;
     }
 
@@ -101,12 +106,58 @@ class Archttp
         return this;
     }
 
+    Routing createRouter()
+    {
+        return new Routing;
+    }
+
+    Archttp use(string path, Routing router)
+    {
+        _mountedRouters[path] = router;
+        router.onMount(this);
+
+        return this;
+    }
+
     private void handle(HttpContext httpContext)
     {
-        // use middlewares for Router
-        MiddlewareExecutor(httpContext.request(), httpContext.response(), _router.middlewareHandlers()).execute();
+        import std.string : indexOf, stripRight;
 
-        auto handler = _router.match(httpContext.request().path(), httpContext.request().method(), httpContext.request().middlewareHandlers, httpContext.request().params);
+        Routing router;
+        string path = httpContext.request().path().length > 1 ? httpContext.request().path().stripRight("/") : httpContext.request().path();
+
+        // check app mounted routers
+        if (_mountedRouters.length && path.length > 1)
+        {
+            string mountpath = path;
+
+            long index = path[1 .. $].indexOf("/");
+
+            if (index > 0)
+            {
+                index++;
+                mountpath = path[0 .. index];
+            }
+
+            router = _mountedRouters.get(mountpath, null);
+            if (router !is null)
+            {
+                if (mountpath.length == path.length)
+                    path = "/";
+                else
+                    path = path[index .. $];
+            }
+
+            // Tracef("mountpath: %s, path: %s", mountpath, path);
+        }
+
+        if (router is null)
+            router = _router;
+
+        // use middlewares for Router
+        MiddlewareExecutor(httpContext.request(), httpContext.response(), router.middlewareHandlers()).execute();
+
+        auto handler = router.match(path, httpContext.request().method(), httpContext.request().middlewareHandlers, httpContext.request().params);
 
         if (handler is null)
         {

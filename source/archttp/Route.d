@@ -45,7 +45,7 @@ class Route(RoutingHandler, MiddlewareHandler)
         _handlers[method] = handler;
     }
 
-    Route addMiddlewareHnalder(MiddlewareHandler handler)
+    Route use(MiddlewareHandler handler)
     {
         _middlewareHandlers ~= handler;
         return this;
