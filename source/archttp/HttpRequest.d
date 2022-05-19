@@ -16,6 +16,7 @@ import geario.logging;
 import archttp.Url;
 import archttp.HttpContext;
 import archttp.HttpHeader;
+import archttp.HttpRequestHandler;
 
 public import archttp.HttpMethod;
 public import archttp.MultiPart;
@@ -44,6 +45,7 @@ class HttpRequest
         string[string] params;
         string[string] fields;
         MultiPart[] files;
+        HttpRequestMiddlewareHandler[] middlewareHandlers;
     }
 
 public:
@@ -64,14 +66,6 @@ public:
         _method = method;
     }
 
-    /*
-     * Set the destination of this request.
-     *
-     * The destination is the URL path of the request, used to determine which resource is being
-     * requested.
-     *
-     * @param destination the URI of the request
-     */
     void uri(Url uri)
     {
         _uri = uri;

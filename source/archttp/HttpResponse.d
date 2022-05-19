@@ -165,7 +165,7 @@ public:
         {
             import std.array : split;
             import std.string : replace;
-            
+
             auto parts = path.replace("\\", "/").split("/");
             if (parts.length == 1)
             {
@@ -236,7 +236,8 @@ public:
 
     string headerToString()
     {
-        header("Date", DateTime.GetTimeAsGMT());
+        header(HttpHeader.X_POWERED_BY, "Archttp");
+        header(HttpHeader.DATE, DateTime.GetTimeAsGMT());
 
         auto text = appender!string;
         text ~= format!"HTTP/1.1 %d %s\r\n"(_statusCode, getHttpStatusMessage(_statusCode));

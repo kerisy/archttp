@@ -38,6 +38,7 @@ public import archttp.HttpContext;
 
 import archttp.HttpRequestHandler;
 import archttp.Router;
+import archttp.MiddlewareExecutor;
 
 import std.socket;
 import std.experimental.allocator;
@@ -58,7 +59,7 @@ class Archttp
         TcpListener _listener;
         EventLoop _loop;
 
-        Router!HttpRequestHandler _router;
+        Router!(HttpRequestHandler, HttpRequestMiddlewareHandler) _router;
     }
 
     this(uint ioThreads = totalCPUs, uint workerThreads = 0)
@@ -66,8 +67,14 @@ class Archttp
         _ioThreads = ioThreads > 1 ? ioThreads : 1;
         _workerThreads = workerThreads;
 
-        _router = new Router!HttpRequestHandler;
+        _router = new Router!(HttpRequestHandler, HttpRequestMiddlewareHandler);
         _loop = new EventLoop;
+    }
+
+    Archttp use(HttpRequestMiddlewareHandler handler)
+    {
+        _router.addMiddlewareHnalder(handler);
+        return this;
     }
 
     Archttp get(string route, HttpRequestHandler handler)
@@ -96,7 +103,10 @@ class Archttp
 
     private void handle(HttpContext httpContext)
     {
-        auto handler = _router.match(httpContext.request().path(), httpContext.request().method(), httpContext.request().params);
+        // use middlewares for Router
+        MiddlewareExecutor(httpContext.request(), httpContext.response(), _router.middlewareHandlers()).execute();
+
+        auto handler = _router.match(httpContext.request().path(), httpContext.request().method(), httpContext.request().middlewareHandlers, httpContext.request().params);
 
         if (handler is null)
         {
@@ -104,6 +114,8 @@ class Archttp
         }
         else
         {
+            // use middlewares for HttpRequestHandler
+            MiddlewareExecutor(httpContext.request(), httpContext.response(), httpContext.request().middlewareHandlers).execute();
             handler(httpContext.request(), httpContext.response());
 
             if (!httpContext.response().headerSent())

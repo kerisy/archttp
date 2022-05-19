@@ -16,3 +16,4 @@ public import archttp.HttpResponse;
 public import archttp.HttpRequest;
 
 alias void delegate(HttpRequest, HttpResponse) HttpRequestHandler;
+alias void delegate(HttpRequest, HttpResponse, void delegate()) HttpRequestMiddlewareHandler;

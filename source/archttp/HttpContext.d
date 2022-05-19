@@ -13,6 +13,7 @@ module archttp.HttpContext;
 
 import archttp.HttpRequest;
 import archttp.HttpResponse;
+import archttp.HttpRequestHandler;
 
 import nbuff;
 

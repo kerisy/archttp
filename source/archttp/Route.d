@@ -15,13 +15,14 @@ import archttp.HttpMethod;
 
 import std.stdio;
 
-class Route(RoutingHandler)
+class Route(RoutingHandler, MiddlewareHandler)
 {
     private
     {
         string _path;
 
         RoutingHandler[HttpMethod] _handlers;
+        MiddlewareHandler[] _middlewareHandlers;
     }
 
     public
@@ -42,6 +43,17 @@ class Route(RoutingHandler)
     {
         _path = path;
         _handlers[method] = handler;
+    }
+
+    Route addMiddlewareHnalder(MiddlewareHandler handler)
+    {
+        _middlewareHandlers ~= handler;
+        return this;
+    }
+
+    MiddlewareHandler[] middlewareHandlers()
+    {
+        return _middlewareHandlers;
     }
 
     RoutingHandler find(HttpMethod method)

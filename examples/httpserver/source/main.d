@@ -5,6 +5,29 @@ void main()
 {
     auto app = new Archttp;
 
+    app.use((request, response, next) {
+        writeln("middleware 1 ..");
+        next();
+    });
+
+    app.use((request, response, next) {
+        writeln("middleware 2 ..");
+        next();
+    });
+
+    app.use((request, response, next) {
+        writeln("middleware 3 ..");
+        next();
+    });
+
+    app.use((request, response, next) {
+        writeln("middleware 4 ..");
+    });
+
+    app.use((request, response, next) {
+        writeln("middleware 5 ..");
+    });
+
     app.get("/", (request, response) {
         response.send("Hello, World!");
     });

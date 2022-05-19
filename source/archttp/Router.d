@@ -20,12 +20,13 @@ import std.regex : regex, match, matchAll;
 import std.array : replaceFirst;
 import std.uri : decode;
 
-class Router(RoutingHandler)
+class Router(RoutingHandler, MiddlewareHandler)
 {
     private
     {
-        Route!RoutingHandler[string] _routes;
-        Route!RoutingHandler[] _regexRoutes;
+        Route!(RoutingHandler, MiddlewareHandler)[string] _routes;
+        Route!(RoutingHandler, MiddlewareHandler)[] _regexRoutes;
+        MiddlewareHandler[] _middlewareHandlers;
     }
     
     Router add(string path, HttpMethod method, RoutingHandler handler)
@@ -44,9 +45,20 @@ class Router(RoutingHandler)
         return this;
     }
 
-    private Route!RoutingHandler CreateRoute(string path, HttpMethod method, RoutingHandler handler)
+    Router addMiddlewareHnalder(MiddlewareHandler handler)
     {
-        auto route = new Route!RoutingHandler(path, method, handler);
+        _middlewareHandlers ~= handler;
+        return this;
+    }
+
+    MiddlewareHandler[] middlewareHandlers()
+    {
+        return _middlewareHandlers;
+    }
+
+    private Route!(RoutingHandler, MiddlewareHandler) CreateRoute(string path, HttpMethod method, RoutingHandler handler)
+    {
+        auto route = new Route!(RoutingHandler, MiddlewareHandler)(path, method, handler);
 
         auto matches = path.matchAll(regex(`\{(\w+)(:([^\}]+))?\}`));
         if (matches)
@@ -74,7 +86,7 @@ class Router(RoutingHandler)
         return route;
     }
 
-    RoutingHandler match(string path, HttpMethod method, ref string[string] params)
+    RoutingHandler match(string path, HttpMethod method, ref MiddlewareHandler[] middlewareHandlers, ref string[string] params)
     {
         auto route = _routes.get(path, null);
 
@@ -110,6 +122,8 @@ class Router(RoutingHandler)
             writeln(method, " method is Not Allowed.");
             return cast(RoutingHandler) null;
         }
+
+        middlewareHandlers = route.middlewareHandlers();
 
         return handler;
     }
