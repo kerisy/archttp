@@ -21,10 +21,10 @@ import archttp.HttpRequestHandler;
 public import archttp.HttpMethod;
 public import archttp.MultiPart;
 
+import std.uni : toLower;
+
 class HttpRequest
 {
-    alias string[string] Header;
-    
     private
     {
         HttpMethod     _method;
@@ -121,20 +121,22 @@ public:
         }
     }
 
-    void httpVersion(string http_version)
+    HttpRequest httpVersion(string httpVersion)
     {
-        // TODO
+        _httpVersion = httpVersion;
+        return this;
     }
 
-    void header(string header, string value)
+    HttpRequest header(string header, string value)
     {
-        // _headers[] ~= [header: value];
-        _headers[header] = value;
+        _headers[header.toLower] = value;
+        return this;
     }
 
-    void body(string body)
+    HttpRequest body(string body)
     {
         _body = body;
+        return this;
     }
 
     Url uri()
@@ -154,14 +156,12 @@ public:
 
     string httpVersion()
     {
-        // TODO
-        
-        return null;
+        return _httpVersion;
     }
 
     string header(string name)
     {
-        return _headers.get(name, "");
+        return _headers.get(name.toLower, "");
     }
 
     string[string] headers()

@@ -30,10 +30,16 @@ void main()
     });
 
     app.get("/", (request, response) {
+        writeln(request.body());
         response.send("Hello, World!");
     });
 
-    auto adminRouter = app.createRouter();
+    app.post("/", (request, response) {
+        writeln(request.body());
+        response.send("Hello, World!");
+    });
+
+    auto adminRouter = Archttp.newRouter();
     
     adminRouter.add("/", HttpMethod.GET, (request, response) {
         response.send("Hello, Admin!");

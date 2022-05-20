@@ -38,11 +38,12 @@ public import archttp.HttpContext;
 public import archttp.HttpMethod;
 
 import archttp.HttpRequestHandler;
-import archttp.Router;
 import archttp.MiddlewareExecutor;
 
 import std.socket;
 import std.experimental.allocator;
+
+import archttp.Router;
 
 alias Router!(HttpRequestHandler, HttpRequestMiddlewareHandler) Routing;
 
@@ -76,6 +77,11 @@ class Archttp
         _loop = new EventLoop;
     }
 
+    static Routing newRouter()
+    {
+        return new Routing;
+    }
+
     Archttp use(HttpRequestMiddlewareHandler handler)
     {
         _router.use(handler);
@@ -104,11 +110,6 @@ class Archttp
     {
         _router.add(route, HttpMethod.DELETE, handler);
         return this;
-    }
-
-    Routing createRouter()
-    {
-        return new Routing;
     }
 
     Archttp use(string path, Routing router)

@@ -75,7 +75,7 @@ public:
         return _statusCode;
     }
 
-    HttpResponse cookie(string name, string value, string path = "/", string domain = "", string expires = "", long maxAge = -1, bool secure = false, bool httpOnly = false)
+    HttpResponse cookie(string name, string value, string path = "/", string domain = "", string expires = "", long maxAge = 604800, bool secure = false, bool httpOnly = false)
     {
         _cookies[name] = new Cookie(name, value, path, domain, expires, maxAge, secure, httpOnly);
         return this;
