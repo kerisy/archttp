@@ -34,6 +34,8 @@ class Router(RoutingHandler, MiddlewareHandler)
     
     Router add(string path, HttpMethod method, RoutingHandler handler)
     {
+        // TODO:
+        // find route when it exists
         auto route = CreateRoute(path, method, handler);
 
         if (route.regular)
@@ -151,7 +153,7 @@ class Router(RoutingHandler, MiddlewareHandler)
 
         if (handler is null)
         {
-            writeln(method, " method is Not Allowed.");
+            writeln("Request: ", path, " method ", method, " is Not Allowed.");
             return cast(RoutingHandler) null;
         }
 
