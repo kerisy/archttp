@@ -41,7 +41,7 @@ class HttpRequest
 
     public
     {
-        string[string] query;
+        // string[string] query;
         string[string] params;
         string[string] fields;
         MultiPart[] files;
@@ -174,6 +174,16 @@ public:
         return _body;
     }
 
+    string query(string key)
+    {
+        return _uri.queryParams[key].front;
+    }
+
+    string param(string key)
+    {
+        return params.get(key, "");
+    }
+
     void reset()
     {
         _headers = null;
@@ -182,7 +192,7 @@ public:
         _cookies = null;
         _cookiesParsed = false;
 
-        query = null;
+        // query = null;
         params = null;
         fields = null;
         files = null;

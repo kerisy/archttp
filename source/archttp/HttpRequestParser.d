@@ -123,7 +123,7 @@ class HttpRequestParser
     {
         if (_data.length < _parsedLength + _contentLength)
         {
-            writeln(_data.length, " - ", _parsedLength, " - ", _contentLength);
+            _parserStatus = ParserStatus.PARTIAL;
             return false;
         }
 
