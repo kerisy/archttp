@@ -1,6 +1,10 @@
 # Archttp
 Archttp 是一个简单好用，拥有真正高性能的 Web 框架。
 
+## 文档
+ 1. [快速开始](docs/QuickStart.zh-CN.md)
+ 2. [Quick Start](docs/QuickStart.md)
+
 ## 漂亮的示例代码
 ```D
 

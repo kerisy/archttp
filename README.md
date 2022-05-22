@@ -1,6 +1,10 @@
 # Archttp
 A highly performant web framework written in D.
 
+## Documents
+ 1. [Quick Start](docs/QuickStart.md)
+ 2. [快速开始](docs/QuickStart.zh-CN.md)
+
 ## Example for web server
 ```D
 
