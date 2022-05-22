@@ -42,6 +42,12 @@ class Route(RoutingHandler, MiddlewareHandler)
     this(string path, HttpMethod method, RoutingHandler handler)
     {
         _path = path;
+
+        bindMethod(method, handler);
+    }
+
+    Route bindMethod(HttpMethod method, RoutingHandler handler)
+    {
         _handlers[method] = handler;
     }
 

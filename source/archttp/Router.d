@@ -27,24 +27,37 @@ class Router(RoutingHandler, MiddlewareHandler)
     private
     {
         Route!(RoutingHandler, MiddlewareHandler)[string] _routes;
-        Route!(RoutingHandler, MiddlewareHandler)[] _regexRoutes;
+        Route!(RoutingHandler, MiddlewareHandler)[string] _regexRoutes;
         MiddlewareHandler[] _middlewareHandlers;
         Archttp _app;
     }
     
     Router add(string path, HttpMethod method, RoutingHandler handler)
     {
-        // TODO:
-        // find route when it exists
-        auto route = CreateRoute(path, method, handler);
+        Router route;
 
-        if (route.regular)
+        route = _routes.get(path, null);
+        if (route is null)
         {
-            _regexRoutes ~= route;
+            route = _regexRoutes.get(path, null);
+        }
+
+        if (route is null)
+        {
+            route = CreateRoute(path, method, handler);
+
+            if (route.regular)
+            {
+                _regexRoutes[path] = route;
+            }
+            else
+            {
+                _routes[path] = route;
+            }
         }
         else
         {
-            _routes[path] = route;
+            route.bindMethod(method, handler);
         }
 
         return this;
