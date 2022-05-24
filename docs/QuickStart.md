@@ -62,9 +62,12 @@ To force a rebuild of up-to-date targets, run again with --force.
 ```
 
 'dub' downloaded 'archttp 1.0.0' and compiled the project. 'No error, we can run the project.
-```bash
-% ./example
-2022 - May - 22 23:05:42. 945314 | 18102067 | Info | Archttp. Run | IO threads: 8 |.. /.. /. Dub/packages/archttp - 1.0.0 archttp/source/archttp archttp. D: 222
+```text
+
+        # Archttp service has been started!
+        - IO threads: 8
+        - Listening: 0.0.0.0:8080
+
 ```
 
 The project is up and running, with eight IO threads enabled, listening on port 8080 in the code, and the browser accessing 'http://localhost:8080/' outputs' Hello, World! 'string.

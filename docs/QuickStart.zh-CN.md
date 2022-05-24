@@ -56,10 +56,13 @@ Linking...
 To force a rebuild of up-to-date targets, run again with --force.
 ```
 从上面的命令输出可以看出来 `dub` 帮我们下载了 `archttp 1.0.0` 并且进行了项目编译，最后的 `Linking...` 也没有出错，我们可以运行项目了。
-```bash
- % ./example
-2022-May-22 23:05:42.945314 | 18102067 | Info | Archttp.run | io threads: 8 | ../../.dub/packages/archttp-1.0.0/archttp/source/archttp/Archttp.d:222
- ```
+```text
+
+        # Archttp service has been started!
+        - IO threads: 8
+        - Listening: 0.0.0.0:8080
+
+```
 项目已经跑起来了，启用了 8 个 io 线程，代码中监听了 8080 端口，浏览器访问 `http://localhost:8080/` 会输出 `Hello, World!` 字符串。
 
 <span id="QUICK_START"></span>
