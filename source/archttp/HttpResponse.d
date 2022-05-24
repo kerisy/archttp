@@ -236,7 +236,7 @@ public:
 
     string headerToString()
     {
-        header(HttpHeader.X_POWERED_BY, "Archttp");
+        header(HttpHeader.SERVER, "Archttp");
         header(HttpHeader.DATE, DateTime.GetTimeAsGMT());
 
         auto text = appender!string;
