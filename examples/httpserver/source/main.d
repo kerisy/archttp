@@ -6,37 +6,36 @@ void main()
 {
     auto app = new Archttp;
 
-    // app.use((request, response, next) {
-    //     writeln("middleware 1 ..");
-    //     next();
-    // });
+    app.use((request, response, next) {
+        writeln("middleware 1 ..");
+        next();
+    });
 
-    // app.use((request, response, next) {
-    //     writeln("middleware 2 ..");
-    //     next();
-    // });
+    app.use((request, response, next) {
+        writeln("middleware 2 ..");
+        next();
+    });
 
-    // app.use((request, response, next) {
-    //     writeln("middleware 3 ..");
-    //     next();
-    // });
+    app.use((request, response, next) {
+        writeln("middleware 3 ..");
+        next();
+    });
 
-    // app.use((request, response, next) {
-    //     writeln("middleware 4 ..");
-    // });
+    app.use((request, response, next) {
+        writeln("middleware 4 ..");
+    });
 
-    // app.use((request, response, next) {
-    //     writeln("middleware 5 ..");
-    // });
+    app.use((request, response, next) {
+        writeln("middleware 5 ..");
+    });
 
     app.get("/", (request, response) {
-        writeln(request.body());
         response.send("Hello, World!");
     });
 
     app.post("/", (request, response) {
-        // writeln(request.body());
-        response.send("Hello, World!");
+        import std.json;
+        response.send( JSONValue( ["message" : "Hello, World!"] ) );
     });
 
     auto adminRouter = Archttp.newRouter();

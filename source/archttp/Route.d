@@ -49,6 +49,7 @@ class Route(RoutingHandler, MiddlewareHandler)
     Route bindMethod(HttpMethod method, RoutingHandler handler)
     {
         _handlers[method] = handler;
+        return this;
     }
 
     Route use(MiddlewareHandler handler)

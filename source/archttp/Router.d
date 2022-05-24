@@ -34,9 +34,8 @@ class Router(RoutingHandler, MiddlewareHandler)
     
     Router add(string path, HttpMethod method, RoutingHandler handler)
     {
-        Router route;
+        auto route = _routes.get(path, null);
 
-        route = _routes.get(path, null);
         if (route is null)
         {
             route = _regexRoutes.get(path, null);

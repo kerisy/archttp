@@ -215,12 +215,24 @@ class Archttp
         this.run();
     }
 
+    private void showHttpServiceInformation()
+    {
+        import std.stdio : writeln;
+        import std.conv : to;
+
+        string text = `
+        # Archttp service has been started!
+        - IO threads: ` ~ _ioThreads.to!string ~ `
+        - Listening: ` ~ _addr.toString() ~ "\n";
+        
+        writeln(text);
+    }
+
     void run()
     {
         DateTime.StartClock();
 
-		Infof("io threads: %d", _ioThreads);
-		// Infof("worker threads: %d", _workerThreads);
+		showHttpServiceInformation();
 
         TcpListener _listener = new TcpListener(_loop, _addr.addressFamily);
 
