@@ -110,7 +110,7 @@ public:
     {
         if (_headersSent)
         {
-            LogErrorf("Can't set headers after they are sent");
+            log.error("Can't set headers after they are sent");
             return;
         }
 
@@ -202,7 +202,7 @@ public:
     {
         if (_headersSent)
         {
-            LogErrorf("Can't set headers after they are sent");
+            log.error("Can't set headers after they are sent");
             return false;
         }
         

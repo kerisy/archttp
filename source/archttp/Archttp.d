@@ -16,7 +16,7 @@ import nbuff;
 import geario.codec;
 
 import geario.event;
-import geario.logging.ConsoleLogger;
+import geario.logging;
 
 import geario.net.TcpListener;
 import geario.net.TcpStream;
@@ -191,7 +191,7 @@ class Archttp
             });
 
         connection.Error((IoError error) { 
-                Errorf("Error occurred: %d  %s", error.errorCode, error.errorMsg); 
+                log.error("Error occurred: %d  %s", error.errorCode, error.errorMsg); 
             });
     }
 
