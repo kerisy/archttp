@@ -78,10 +78,10 @@ class HttpContext
         if (false == _keepAliveSetted)
         {
             string connectionType = _request.header("Connection");
-            if (connectionType.length && connectionType == "keep-alive")
-                _keepAlive = true;
-            else
+            if (connectionType.length && connectionType == "close")
                 _keepAlive = false;
+            else
+                _keepAlive = true;
 
             _keepAliveSetted = true;
         }
