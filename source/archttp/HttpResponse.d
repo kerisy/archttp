@@ -95,6 +95,8 @@ public:
     void send(string body)
     {
         _body = body;
+        
+        header("Content-Type", "text/plain");
         send();
     }
 
